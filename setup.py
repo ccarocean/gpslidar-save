@@ -17,7 +17,7 @@ def read_version(filename):
 
 setup(
     name='gpslidar-save',
-    version=read_version('webserver/__init__.py'),
+    version=read_version('save/__init__.py'),
     author='Adam Dodge',
     author_email='Adam.Dodge@Colorado.edu',
     description='Set of tools for saving data from a database originally received from api post requests.',
