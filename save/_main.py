@@ -44,10 +44,10 @@ def main():
                                         .where(lidar.columns.unix_time > unix_yesterday)
                                         .where(lidar.columns.station_id == s[0])
                                         ).fetchall()
-
-        save_lidar(lidar_data, args.directory, s[1])
-        lidar_ids = [i[0] for i in lidar_data]
-        connection.execute(db.delete([lidar]).where(lidar.columns.id.in_(lidar_ids)))
+        if len(lidar_data) > 0:
+            save_lidar(lidar_data, args.directory, s[1])
+            lidar_ids = [i[0] for i in lidar_data]
+            connection.execute(db.delete([lidar]).where(lidar.columns.id.in_(lidar_ids)))
 
         # GPS Position
         gpspos_data = connection.execute(db.select([gps_position])
@@ -56,9 +56,10 @@ def main():
                                          .where(gps_position.columns.i_tow < today_itow)
                                          .where(gps_position.columns.station_id == s[0])
                                          ).fetchall()
-        save_gps_pos(gpspos_data, args.directory, s[1])
-        gpspos_ids = [i[0] for i in gpspos_data]
-        connection.execute(db.delete([gps_position]).where(gps_position.columns.id.in_(gpspos_ids)))
+        if len(gpspos_data) > 0:
+            save_gps_pos(gpspos_data, args.directory, s[1])
+            gpspos_ids = [i[0] for i in gpspos_data]
+            connection.execute(db.delete([gps_position]).where(gps_position.columns.id.in_(gpspos_ids)))
 
         # Raw GPS overall data
         raw_list = []
@@ -68,14 +69,15 @@ def main():
                                          .where((gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds) < today_rtow)
                                          .where(gps_raw.columns.station_id == s[0])
                                          ).fetchall()
+        
+        if len(gpsraw_data) > 0:
+            for i in gpsraw_data:
+                measurements = connection.execute(db.select([gps_measurement])
+                                                  .where(gps_measurement.columns.gps_raw_id == i[0])
+                                                  ).fetchall()
+                raw_list.append(RxmRawx(i[1], i[2], i[3], measurements))
 
-        for i in gpsraw_data:
-            measurements = connection.execute(db.select([gps_measurement])
-                                              .where(gps_measurement.columns.gps_raw_id == i[0])
-                                              ).fetchall()
-            raw_list.append(RxmRawx(i[1], i[2], i[3], measurements))
-
-        save_raw_gps(raw_list, args.directory, s[1], s[2], s[3], s[4], s[6])
-        gpsraw_ids = [i[0] for i in gpsraw_data]
-        connection.execute(db.delete([gps_raw]).where(gps_raw.columns.id.in_(gpsraw_ids)))
-        connection.execute(db.delete([gps_measurement]).where(gps_measurement.columns.gps_raw_id.in_(gpsraw_ids)))
+            save_raw_gps(raw_list, args.directory, s[1], s[2], s[3], s[4], s[6])
+            gpsraw_ids = [i[0] for i in gpsraw_data]
+            connection.execute(db.delete([gps_raw]).where(gps_raw.columns.id.in_(gpsraw_ids)))
+            connection.execute(db.delete([gps_measurement]).where(gps_measurement.columns.gps_raw_id.in_(gpsraw_ids)))

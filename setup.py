@@ -30,6 +30,7 @@ setup(
         'sqlalchemy',
         'dataclasses;python_version=="3.6"',
         'numpy',
+        'psycopg2',
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',
