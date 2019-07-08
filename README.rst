@@ -43,9 +43,7 @@ Run:
 
 Related Files
 -------------
-- LiDAR data directory must exist at /srv/data/gpslidar/lidar
-- Raw GPS data directory must exist at /srv/data/gpslidar/rawgps
-- GPS position data directory must exist at /srv/data/gpslidar/position
+- Desired output data directory, where the default is /srv/data/gpslidar/<location>/<type>
 
 Author
 ------
