@@ -1,6 +1,7 @@
 import argparse
 import sqlalchemy as db
 import datetime as dt
+import os
 from .save import save_gps_pos, save_raw_gps, save_lidar
 from .messages import RxmRawx
 
@@ -9,8 +10,7 @@ def main():
     # Parse arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--directory', type=str, default='/srv/data/gpslidar',
-                        help='Directory for output data. Must have subdirectory for each location, containing '
-                             'subdirectories for data types.')
+                        help='Directory for output data. Default is /srv/data/gpslidar')
     args = parser.parse_args()
 
     engine = db.create_engine(dname)
@@ -38,6 +38,16 @@ def main():
     today_rtow = yesterday_rtow + 24 * 3600
 
     for s in stations_data:
+        # Make directories if they don't exist
+        if not os.path.isdir(os.path.join(args.directory, s[1])):
+            os.mkdir(os.path.join(args.directory, s[1]))
+        if not os.path.isdir(os.path.join(args.directory, s[1], 'lidar')):
+            os.mkdir(os.path.join(args.directory, s[1], 'lidar'))
+        if not os.path.isdir(os.path.join(args.directory, s[1], 'position')):
+            os.mkdir(os.path.join(args.directory, s[1], 'position'))
+        if not os.path.isdir(os.path.join(args.directory, s[1], 'rawgps')):
+            os.mkdir(os.path.join(args.directory, s[1], 'rawgps'))
+
         # LiDAR
         lidar_data = connection.execute(db.select([lidar])
                                         .where(lidar.columns.unix_time < unix_today)
@@ -69,7 +79,7 @@ def main():
                                          .where((gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds) < today_rtow)
                                          .where(gps_raw.columns.station_id == s[0])
                                          ).fetchall()
-        
+
         if len(gpsraw_data) > 0:
             for i in gpsraw_data:
                 measurements = connection.execute(db.select([gps_measurement])

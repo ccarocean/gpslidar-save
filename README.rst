@@ -5,6 +5,10 @@ Title: gpslidar-save
 
 Options
 -------
+optional arguments:
+  -h, --help            show this help message and exit
+  -d DIRECTORY, --directory DIRECTORY
+                        Directory for output data. Default is /srv/data/gpslidar.
 
 Installation
 ------------
