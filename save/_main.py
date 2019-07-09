@@ -58,6 +58,7 @@ def main():
             save_lidar(lidar_data, args.directory, s[1])
             lidar_ids = [i[0] for i in lidar_data]
             connection.execute(db.delete(lidar).where(lidar.columns.id.in_(lidar_ids)))
+            print("LiDAR Data saved for " + s[1])
 
         # GPS Position
         gpspos_data = connection.execute(db.select([gps_position])
@@ -70,6 +71,7 @@ def main():
             save_gps_pos(gpspos_data, args.directory, s[1])
             gpspos_ids = [i[0] for i in gpspos_data]
             connection.execute(db.delete(gps_position).where(gps_position.columns.id.in_(gpspos_ids)))
+            print("GPS Position Data saved for " + s[1])
 
         # Raw GPS overall data
         raw_list = []
@@ -91,3 +93,4 @@ def main():
             gpsraw_ids = [i[0] for i in gpsraw_data]
             connection.execute(db.delete(gps_raw).where(gps_raw.columns.id.in_(gpsraw_ids)))
             connection.execute(db.delete(gps_measurement).where(gps_measurement.columns.gps_raw_id.in_(gpsraw_ids)))
+            print("Raw GPS Data saved for " + s[1])
