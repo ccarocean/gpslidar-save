@@ -121,17 +121,26 @@ class RinexWrite:
             snr0 = s[0].cno
             if s[0].key == '':
                 pass
-            else:
+            elif s[0].sigId in [0, 1]:
                 line = line + f'{s[0].key:3s}{s[0].prMeas:>14.3f} {snr0:>1d}{s[0].cpMeas:>14.3f} {snr0:>1d}' \
                               f'{s[0].doMeas:>14.3f} {snr0:>1d}{s[0].cno:>14.3f} {snr0:>1d}'
-            if len(s) == 2:  # If L1 and L2 Frequencies
-                snr1 = s[1].cno
+                if len(s) == 2:  # If L1 and L2 Frequencies
+                    snr1 = s[1].cno
+                    line = line + f'{s[1].prMeas:>14.3f} {snr1:>1d}{s[1].cpMeas:>14.3f} {snr1:>1d}{s[1].doMeas:>14.3f} ' \
+                        f'{snr1:>1d}{s[1].cno:>14.3f} {snr1:>1d}\n'
+
+                else:
+                    line = line + f'{0.0:>14.3f}  {0.0:>14.3f}  {0.0:>14.3f}  {0.0:>14.3f}  \n'
+            elif len(s) < 2:
+                line = line + f'{0.0:>14.3f}  {0.0:>14.3f}  {0.0:>14.3f}  {0.0:>14.3f}  ' \
+                              f'{s[0].key:3s}{s[0].prMeas:>14.3f} {snr0:>1d}{s[0].cpMeas:>14.3f} {snr0:>1d}' \
+                              f'{s[0].doMeas:>14.3f} {snr0:>1d}{s[0].cno:>14.3f} {snr0:>1d}\n'
+            elif len(s) == 2:
                 line = line + f'{s[1].prMeas:>14.3f} {snr1:>1d}{s[1].cpMeas:>14.3f} {snr1:>1d}{s[1].doMeas:>14.3f} ' \
-                              f'{snr1:>1d}{s[1].cno:>14.3f} {snr1:>1d}\n'
-
-            else:
-                line = line + f'{0.0:>14.3f}  {0.0:>14.3f}  {0.0:>14.3f}  {0.0:>14.3f}  \n'
-
+                              f'{snr1:>1d}{s[1].cno:>14.3f} {snr1:>1d}' \
+                              f'{s[0].key:3s}{s[0].prMeas:>14.3f} {snr0:>1d}{s[0].cpMeas:>14.3f} {snr0:>1d}' \
+                              f'{s[0].doMeas:>14.3f} {snr0:>1d}{s[0].cno:>14.3f} {snr0:>1d}\n'
+            
         try:
             with open(self.fname, 'a') as f:
                 f.write(epoch + line)
