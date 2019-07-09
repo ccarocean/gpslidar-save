@@ -91,6 +91,6 @@ def main():
 
             save_raw_gps(raw_list, args.directory, s[1], s[2], s[3], s[4], s[6])
             gpsraw_ids = [i[0] for i in gpsraw_data]
-            connection.execute(db.delete(gps_raw).where(gps_raw.columns.id.in_(gpsraw_ids)))
             connection.execute(db.delete(gps_measurement).where(gps_measurement.columns.gps_raw_id.in_(gpsraw_ids)))
+            connection.execute(db.delete(gps_raw).where(gps_raw.columns.id.in_(gpsraw_ids)))
             print("Raw GPS Data saved for " + s[1])
