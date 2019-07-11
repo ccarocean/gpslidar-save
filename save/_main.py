@@ -57,11 +57,19 @@ def main():
                                         .where(lidar.columns.unix_time > unix_yesterday)
                                         .where(lidar.columns.station_id == s[0])
                                         .order_by(lidar.columns.unix_time)
-                                        ).fetchall()
-        if len(lidar_data) > 0:
+                                        ).fetchmany(1000000)
+        lidar_ids = False
+        while len(lidar_data) > 0:
             save_lidar(lidar_data, args.directory, s[1])
             lidar_ids = [i[0] for i in lidar_data]
             connection.execute(db.delete(lidar).where(lidar.columns.id.in_(lidar_ids)))
+            lidar_data = connection.execute(db.select([lidar])
+                                            .where(lidar.columns.unix_time < unix_today)
+                                            .where(lidar.columns.unix_time > unix_yesterday)
+                                            .where(lidar.columns.station_id == s[0])
+                                            .order_by(lidar.columns.unix_time)
+                                            ).fetchmany(1000000)
+        if lidar_ids:
             print("LiDAR Data saved for " + s[1])
 
         # GPS Position for previous day
@@ -86,9 +94,9 @@ def main():
                                          .where((gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds) < today_rtow)
                                          .where(gps_raw.columns.station_id == s[0])
                                          .order_by(gps_raw.columns.week, gps_raw.columns.rcv_tow)
-                                         ).fetchall()
-
-        if len(gpsraw_data) > 0:
+                                         ).fetchmany(1000000)
+        gpsraw_ids = False
+        while len(gpsraw_data) > 0:
             for i in gpsraw_data:
                 measurements = connection.execute(db.select([gps_measurement])
                                                   .where(gps_measurement.columns.gps_raw_id == i[0])
@@ -99,6 +107,15 @@ def main():
             gpsraw_ids = [i[0] for i in gpsraw_data]
             connection.execute(db.delete(gps_measurement).where(gps_measurement.columns.gps_raw_id.in_(gpsraw_ids)))
             connection.execute(db.delete(gps_raw).where(gps_raw.columns.id.in_(gpsraw_ids)))
+            gpsraw_data = connection.execute(db.select([gps_raw])
+                                             .where(gps_raw.columns.week == yesterday_week)
+                                             .where((gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds) > yesterday_rtow)
+                                             .where((gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds) < today_rtow)
+                                             .where(gps_raw.columns.station_id == s[0])
+                                             .order_by(gps_raw.columns.week, gps_raw.columns.rcv_tow)
+                                             ).fetchmany(1000000)
+
+        if gpsraw_ids:
             print("Raw GPS Data saved for " + s[1])
 
         # Check if old lidar data exists
@@ -106,7 +123,8 @@ def main():
                                        .where(lidar.columns.unix_time < unix_yesterday)
                                        .where(lidar.columns.station_id == s[0])
                                        .order_by(lidar.columns.unix_time)
-                                       ).fetchall()
+                                       ).fetchmany(1000000)
+        lidar_ids = False
         while len(lidar_old) > 0:
             day = dt.datetime(1970, 1, 1) + dt.timedelta(days=lidar_old[0][1]//(3600*24))
             unix_st = (day - dt.datetime(1970, 1, 1)).total_seconds()
@@ -121,12 +139,14 @@ def main():
             save_lidar(data, args.directory, s[1])
             lidar_ids = [i[0] for i in data]
             connection.execute(db.delete(lidar).where(lidar.columns.id.in_(lidar_ids)))
-            print("Old LiDAR Data saved for " + s[1])
             lidar_old = connection.execute(db.select([lidar])
                                            .where(lidar.columns.unix_time < unix_yesterday)
                                            .where(lidar.columns.station_id == s[0])
                                            .order_by(lidar.columns.unix_time)
-                                           ).fetchall()
+                                           ).fetchmany(1000000)
+
+        if lidar_ids:
+            print("Old LiDAR Data saved for " + s[1])
 
         # Check if old position data exists
         pos_old = connection.execute(db.select([gps_position])
@@ -172,8 +192,8 @@ def main():
                                                            yesterday_rtow)))
                                      .where(gps_raw.columns.station_id == s[0])
                                      .order_by(gps_raw.columns.week, gps_raw.columns.rcv_tow)
-                                     ).fetchall()
-
+                                     ).fetchmany(1000000)
+        gpsraw_ids = False
         while len(raw_old) > 0:
             day = dt.datetime(1980, 1, 6) + dt.timedelta(days=7 * raw_old[0][2]) + \
                   dt.timedelta(days=(raw_old[0][1]-raw_old[0][3]) // (3600 * 24))
@@ -199,7 +219,6 @@ def main():
             gpsraw_ids = [i[0] for i in gpsraw_data]
             connection.execute(db.delete(gps_measurement).where(gps_measurement.columns.gps_raw_id.in_(gpsraw_ids)))
             connection.execute(db.delete(gps_raw).where(gps_raw.columns.id.in_(gpsraw_ids)))
-            print("Old Raw GPS Data saved for " + s[1])
 
             raw_old = connection.execute(db.select([gps_raw])
                                          .where(db.or_(gps_raw.columns.week < yesterday_week,
@@ -210,3 +229,6 @@ def main():
                                          .where(gps_raw.columns.station_id == s[0])
                                          .order_by(gps_raw.columns.week, gps_raw.columns.rcv_tow)
                                          ).fetchall()
+
+        if gpsraw_ids:
+            print("Old Raw GPS Data saved for " + s[1])
