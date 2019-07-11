@@ -6,8 +6,11 @@ from .output import RinexWrite
 
 def save_lidar(data, data_directory, loc):
     """ Function for saving lidar data from API. """
-    t0 = dt.datetime(1970, 1, 1)
-    t = [t0 + dt.timedelta(seconds=i[1]) for i in data]
+    t0 = dt.datetime(1970, 1, 1) + dt.timedelta(seconds=data[0][1])
+    t0 = dt.datetime(t0.year, t0.month, t0.day)
+    secs = (t0 - dt.datetime(1970, 1, 1)).total_seconds()
+
+    t = [i[1] - secs for i in data]
     meas = [i[2] for i in data]
     try:
         with open(os.path.join(data_directory, loc, 'lidar', t[0].strftime('%Y-%m-%d.txt')), 'a+') as f:
