@@ -213,7 +213,7 @@ def main():
                 old_measurements = connection.execute(db.select([gps_measurement])
                                                       .where(gps_measurement.columns.gps_raw_id == i[0])
                                                       ).fetchall()
-                raw_list.append(RxmRawx(i[1], i[2], i[3], measurements))
+                raw_list.append(RxmRawx(i[1], i[2], i[3], old_measurements))
 
             save_raw_gps(raw_list, args.directory, s[1], s[2], s[3], s[4], s[6])
             gpsraw_ids = [i[0] for i in gpsraw_data]
@@ -223,9 +223,8 @@ def main():
             raw_old = connection.execute(db.select([gps_raw])
                                          .where(db.or_(gps_raw.columns.week < yesterday_week,
                                                        db.and_(gps_raw.columns.week == yesterday_week,
-                                                               (
-                                                                           gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds) <
-                                                               yesterday_rtow)))
+                                                               (gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds)
+                                                               < yesterday_rtow)))
                                          .where(gps_raw.columns.station_id == s[0])
                                          .order_by(gps_raw.columns.week, gps_raw.columns.rcv_tow)
                                          ).fetchmany(1000000)
