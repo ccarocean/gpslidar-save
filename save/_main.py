@@ -51,7 +51,6 @@ def main():
         if not os.path.isdir(os.path.join(args.directory, s[1], 'rawgps')):
             os.mkdir(os.path.join(args.directory, s[1], 'rawgps'))
 
-        print('Starting lidar')
         # LiDAR for previous day
         lidar_data = connection.execute(db.select([lidar])
                                         .where(lidar.columns.unix_time < unix_today)
@@ -63,16 +62,13 @@ def main():
         while len(lidar_data) > 0:
             save_lidar(lidar_data, args.directory, s[1])
             lidar_ids = [i[0] for i in lidar_data]
-            print('a')
             connection.execute(db.delete(lidar).where(lidar.columns.id.in_(lidar_ids)))
-            print('b')
             lidar_data = connection.execute(db.select([lidar])
                                             .where(lidar.columns.unix_time < unix_today)
                                             .where(lidar.columns.unix_time > unix_yesterday)
                                             .where(lidar.columns.station_id == s[0])
                                             .order_by(lidar.columns.unix_time)
                                             ).fetchmany(1000000)
-            print('c')
         if lidar_ids:
             print("LiDAR Data saved for " + s[1])
 
