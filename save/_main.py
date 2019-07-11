@@ -10,6 +10,9 @@ def main():
     dname = os.environ['GPSLIDAR_DNAME']
     data_dir = os.environ['GPSLIDARDATADIRECTORY']
 
+    print(dname)
+    print(data_dir)
+
     # Parse arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--directory', type=str, default=data_dir,
@@ -19,12 +22,15 @@ def main():
     engine = db.create_engine(dname)
     meta = db.MetaData()
     connection = engine.connect()
+    print('Database connected')
 
     stations = db.Table('stations', meta, autoload=True, autoload_with=engine)
     lidar = db.Table('lidar', meta, autoload=True, autoload_with=engine)
     gps_raw = db.Table('gps_raw', meta, autoload=True, autoload_with=engine)
     gps_measurement = db.Table('gps_measurement', meta, autoload=True, autoload_with=engine)
     gps_position = db.Table('gps_position', meta, autoload=True, autoload_with=engine)
+
+    print('Tables created')
 
     # Stations
     stations_data = connection.execute(db.select([stations])).fetchall()
@@ -40,6 +46,8 @@ def main():
     yesterday_rtow = (yesterday - dt.datetime(1980, 1, 6)).total_seconds() % (7 * 24 * 3600)
     today_rtow = yesterday_rtow + 24 * 3600
 
+    print('Dates found')
+
     for s in stations_data:
         # Make directories if they don't exist
         if not os.path.isdir(os.path.join(args.directory, s[1])):
@@ -51,6 +59,7 @@ def main():
         if not os.path.isdir(os.path.join(args.directory, s[1], 'rawgps')):
             os.mkdir(os.path.join(args.directory, s[1], 'rawgps'))
 
+        print('Starting lidar')
         # LiDAR for previous day
         lidar_data = connection.execute(db.select([lidar])
                                         .where(lidar.columns.unix_time < unix_today)
