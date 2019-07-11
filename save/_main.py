@@ -7,6 +7,7 @@ from .messages import RxmRawx
 
 
 def main():
+    print('jello')
     dname = os.environ['GPSLIDAR_DNAME']
     data_dir = os.environ['GPSLIDARDATADIRECTORY']
 
