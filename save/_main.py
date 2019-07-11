@@ -57,18 +57,21 @@ def main():
                                         .where(lidar.columns.unix_time > unix_yesterday)
                                         .where(lidar.columns.station_id == s[0])
                                         .order_by(lidar.columns.unix_time)
-                                        ).fetchmany(1000000)
+                                        ).fetchmany(100000)
         lidar_ids = False
         while len(lidar_data) > 0:
+            print('a')
             save_lidar(lidar_data, args.directory, s[1])
             lidar_ids = [i[0] for i in lidar_data]
+            print('b')
             connection.execute(db.delete(lidar).where(lidar.columns.id.in_(lidar_ids)))
             lidar_data = connection.execute(db.select([lidar])
                                             .where(lidar.columns.unix_time < unix_today)
                                             .where(lidar.columns.unix_time > unix_yesterday)
                                             .where(lidar.columns.station_id == s[0])
                                             .order_by(lidar.columns.unix_time)
-                                            ).fetchmany(1000000)
+                                            ).fetchmany(100000)
+            print('c')
         if lidar_ids:
             print("LiDAR Data saved for " + s[1])
 
@@ -94,7 +97,7 @@ def main():
                                          .where((gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds) < today_rtow)
                                          .where(gps_raw.columns.station_id == s[0])
                                          .order_by(gps_raw.columns.week, gps_raw.columns.rcv_tow)
-                                         ).fetchmany(1000000)
+                                         ).fetchmany(100000)
         gpsraw_ids = False
         while len(gpsraw_data) > 0:
             for i in gpsraw_data:
@@ -113,7 +116,7 @@ def main():
                                              .where((gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds) < today_rtow)
                                              .where(gps_raw.columns.station_id == s[0])
                                              .order_by(gps_raw.columns.week, gps_raw.columns.rcv_tow)
-                                             ).fetchmany(1000000)
+                                             ).fetchmany(100000)
 
         if gpsraw_ids:
             print("Raw GPS Data saved for " + s[1])
@@ -123,7 +126,7 @@ def main():
                                        .where(lidar.columns.unix_time < unix_yesterday)
                                        .where(lidar.columns.station_id == s[0])
                                        .order_by(lidar.columns.unix_time)
-                                       ).fetchmany(1000000)
+                                       ).fetchmany(100000)
         lidar_ids = False
         while len(lidar_old) > 0:
             day = dt.datetime(1970, 1, 1) + dt.timedelta(days=lidar_old[0][1]//(3600*24))
@@ -143,7 +146,7 @@ def main():
                                            .where(lidar.columns.unix_time < unix_yesterday)
                                            .where(lidar.columns.station_id == s[0])
                                            .order_by(lidar.columns.unix_time)
-                                           ).fetchmany(1000000)
+                                           ).fetchmany(100000)
 
         if lidar_ids:
             print("Old LiDAR Data saved for " + s[1])
@@ -192,7 +195,7 @@ def main():
                                                            yesterday_rtow)))
                                      .where(gps_raw.columns.station_id == s[0])
                                      .order_by(gps_raw.columns.week, gps_raw.columns.rcv_tow)
-                                     ).fetchmany(1000000)
+                                     ).fetchmany(100000)
         gpsraw_ids = False
         while len(raw_old) > 0:
             day = dt.datetime(1980, 1, 6) + dt.timedelta(days=7 * raw_old[0][2]) + \
@@ -228,7 +231,7 @@ def main():
                                                                yesterday_rtow)))
                                          .where(gps_raw.columns.station_id == s[0])
                                          .order_by(gps_raw.columns.week, gps_raw.columns.rcv_tow)
-                                         ).fetchall()
+                                         ).fetchmany(100000)
 
         if gpsraw_ids:
             print("Old Raw GPS Data saved for " + s[1])
