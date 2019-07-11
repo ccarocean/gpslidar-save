@@ -70,6 +70,7 @@ def main():
                                         ).fetchmany(100000)
         lidar_ids = False
         while len(lidar_data) > 0:
+            import pdb; pdb.set_trace()
             print('a')
             save_lidar(lidar_data, args.directory, s[1])
             lidar_ids = [i[0] for i in lidar_data]
