@@ -13,7 +13,7 @@ def save_lidar(data, data_directory, loc):
     t = [i[1] - secs for i in data]
     meas = [i[2] for i in data]
     try:
-        with open(os.path.join(data_directory, loc, 'lidar', t[0].strftime('%Y-%m-%d.txt')), 'a+') as f:
+        with open(os.path.join(data_directory, loc, 'lidar', t0.strftime('%Y-%m-%d.txt')), 'a+') as f:
             for i, j in zip(t, meas):
                 f.write(f'{i} {j}\n')
     except FileNotFoundError:

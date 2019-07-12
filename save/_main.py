@@ -46,6 +46,8 @@ def main():
             os.mkdir(os.path.join(args.directory, s[1]))
         if not os.path.isdir(os.path.join(args.directory, s[1], 'lidar')):
             os.mkdir(os.path.join(args.directory, s[1], 'lidar'))
+        if not os.path.isdir(os.path.join(args.directory, s[1], 'lidar_sixmin')):
+            os.mkdir(os.path.join(args.directory, s[1], 'lidar_sixmin'))
         if not os.path.isdir(os.path.join(args.directory, s[1], 'position')):
             os.mkdir(os.path.join(args.directory, s[1], 'position'))
         if not os.path.isdir(os.path.join(args.directory, s[1], 'rawgps')):
