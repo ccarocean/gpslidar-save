@@ -6,16 +6,20 @@ from .output import RinexWrite
 
 def save_lidar(data, data_directory, loc):
     """ Function for saving lidar data from API. """
+    print('a')
     t0 = dt.datetime(1970, 1, 1) + dt.timedelta(seconds=data[0][1])
-    t0 = dt.datetime(t0.year, t0.month, t0.day)
-    secs = (t0 - dt.datetime(1970, 1, 1)).total_seconds()
-
+    t0_day = dt.datetime(t0.year, t0.month, t0.day)
+    secs = (t0_day - dt.datetime(1970, 1, 1)).total_seconds()
+    print('b')
     t = [i[1] - secs for i in data]
+    print('c')
     meas = [i[2] for i in data]
+    print('d')
     try:
-        with open(os.path.join(data_directory, loc, 'lidar', t0.strftime('%Y-%m-%d.txt')), 'a+') as f:
+        with open(os.path.join(data_directory, loc, 'lidar', t0_day.strftime('%Y-%m-%d.txt')), 'a+') as f:
             for i, j in zip(t, meas):
                 f.write(f'{i} {j}\n')
+            print('e')
     except FileNotFoundError:
         print("Data directory is bad. Try again. ")
         sys.exit(0)
