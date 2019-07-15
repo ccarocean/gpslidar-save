@@ -53,7 +53,6 @@ def main():
         if not os.path.isdir(os.path.join(args.directory, s[1], 'rawgps')):
             os.mkdir(os.path.join(args.directory, s[1], 'rawgps'))
 
-        print('lidar for ' + s[1])
         # LiDAR for previous day
         lidar_data = connection.execute(db.select([lidar])
                                         .where(lidar.columns.unix_time < unix_today)
@@ -61,28 +60,22 @@ def main():
                                         .where(lidar.columns.station_id == s[0])
                                         .order_by(lidar.columns.unix_time)
                                         ).fetchmany(1000000)
-        print('a')
+
         timetmp = dt.datetime.utcnow()
         lidar_ids = False
         while len(lidar_data) > 0:
-            print('b: ' + str((dt.datetime.utcnow() - timetmp).total_seconds()))
             save_lidar(lidar_data, args.directory, s[1])
-            print('c: ' + str((dt.datetime.utcnow() - timetmp).total_seconds()))
             lidar_ids = [i[0] for i in lidar_data]
-            print('d: ' + str((dt.datetime.utcnow() - timetmp).total_seconds()))
             connection.execute(db.delete(lidar).where(lidar.columns.id.in_(lidar_ids)))
-            print('e: ' + str((dt.datetime.utcnow() - timetmp).total_seconds()))
             lidar_data = connection.execute(db.select([lidar])
                                             .where(lidar.columns.unix_time < unix_today)
                                             .where(lidar.columns.unix_time > unix_yesterday)
                                             .where(lidar.columns.station_id == s[0])
                                             .order_by(lidar.columns.unix_time)
                                             ).fetchmany(1000000)
-            print('f: ' + str((dt.datetime.utcnow() - timetmp).total_seconds()))
         if lidar_ids is not False:
             print("LiDAR Data saved for " + s[1])
 
-        print('gpspos for ' + s[1])
         # GPS Position for previous day
         gpspos_data = connection.execute(db.select([gps_position])
                                          .where(gps_position.columns.week == yesterday_week)
@@ -97,7 +90,6 @@ def main():
             connection.execute(db.delete(gps_position).where(gps_position.columns.id.in_(gpspos_ids)))
             print("GPS Position Data saved for " + s[1])
 
-        print('gpsraw for ' + s[1])
         # Raw GPS overall data for previous day
         raw_list = []
         gpsraw_data = connection.execute(db.select([gps_raw])
@@ -130,13 +122,12 @@ def main():
         if gpsraw_ids is not False:
             print("Raw GPS Data saved for " + s[1])
 
-        print('old lidar for ' + s[1])
         # Check if old lidar data exists
         lidar_old = connection.execute(db.select([lidar])
                                        .where(lidar.columns.unix_time < unix_yesterday)
                                        .where(lidar.columns.station_id == s[0])
                                        .order_by(lidar.columns.unix_time)
-                                       ).fetchmany(1000000)
+                                       ).fetchmany(10000000)
         lidar_ids = False
         while len(lidar_old) > 0:
             day = dt.datetime(1970, 1, 1) + dt.timedelta(days=lidar_old[0][1]//(3600*24))
@@ -156,12 +147,11 @@ def main():
                                            .where(lidar.columns.unix_time < unix_yesterday)
                                            .where(lidar.columns.station_id == s[0])
                                            .order_by(lidar.columns.unix_time)
-                                           ).fetchmany(1000000)
+                                           ).fetchmany(10000000)
 
         if lidar_ids is not False:
             print("Old LiDAR Data saved for " + s[1])
 
-        print('old gpspos for ' + s[1])
         # Check if old position data exists
         pos_old = connection.execute(db.select([gps_position])
                                      .where(db.or_(gps_position.columns.week < yesterday_week,
@@ -198,7 +188,6 @@ def main():
                                          .order_by(gps_position.columns.week, gps_position.columns.i_tow)
                                          ).fetchall()
 
-        print('old gpsraw for ' + s[1])
         # Check if old raw gps data exists
         raw_old = connection.execute(db.select([gps_raw])
                                      .where(db.or_(gps_raw.columns.week < yesterday_week,
