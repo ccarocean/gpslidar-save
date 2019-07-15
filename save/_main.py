@@ -135,7 +135,7 @@ def main():
                                        .where(lidar.columns.unix_time < unix_yesterday)
                                        .where(lidar.columns.station_id == s[0])
                                        .order_by(lidar.columns.unix_time)
-                                       ).fetchone()
+                                       ).fetchmany(1)
         lidar_ids = False
         while len(lidar_old) > 0:
             print('old lidar')
