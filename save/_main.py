@@ -135,28 +135,18 @@ def main():
                                        .where(lidar.columns.unix_time < unix_yesterday)
                                        .where(lidar.columns.station_id == s[0])
                                        .order_by(lidar.columns.unix_time)
-                                       ).fetchmany(500000)
+                                       ).fetchmany(5000000)
         lidar_ids = False
         while len(lidar_old) > 0:
             print('old lidar')
-            day = dt.datetime(1970, 1, 1) + dt.timedelta(days=lidar_old[0][1]//(3600*24))
-            unix_st = (day - dt.datetime(1970, 1, 1)).total_seconds()
-            unix_end = (day + dt.timedelta(days=1) - dt.datetime(1970, 1, 1)).total_seconds()
-
-            data = connection.execute(db.select([lidar])
-                                      .where(lidar.columns.unix_time > unix_st)
-                                      .where(lidar.columns.unix_time < unix_end)
-                                      .where(lidar.columns.station_id == s[0])
-                                      .order_by(lidar.columns.unix_time)
-                                      ).fetchall()
-            save_lidar(data, args.directory, s[1])
-            lidar_ids = [i[0] for i in data]
+            save_lidar(lidar_old, args.directory, s[1])
+            lidar_ids = [i[0] for i in lidar_old]
             connection.execute(db.delete(lidar).where(lidar.columns.id.in_(lidar_ids)))
             lidar_old = connection.execute(db.select([lidar])
                                            .where(lidar.columns.unix_time < unix_yesterday)
                                            .where(lidar.columns.station_id == s[0])
                                            .order_by(lidar.columns.unix_time)
-                                           ).fetchmany(500000)
+                                           ).fetchmany(5000000)
 
         if lidar_ids is not False:
             print("Old LiDAR Data saved for " + s[1])
