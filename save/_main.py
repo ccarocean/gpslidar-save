@@ -133,7 +133,6 @@ def main():
                                       ).fetchmany(1)
 
         while len(raw_data) > 0:
-            import pdb; pdb.set_trace()
             day = dt.datetime(1980, 1, 6) + dt.timedelta(days=7 * raw_data[0][2]) + \
                   dt.timedelta(days=(raw_data[0][1]-raw_data[0][3]) // (3600 * 24))
             week = (day - dt.datetime(1980, 1, 6)).total_seconds() / (3600 * 24) // 7
