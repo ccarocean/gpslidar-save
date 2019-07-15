@@ -62,22 +62,23 @@ def main():
                                         .order_by(lidar.columns.unix_time)
                                         ).fetchmany(1000000)
         print('a')
+        timetmp = dt.datetime.utcnow()
         lidar_ids = False
         while len(lidar_data) > 0:
-            print('b')
+            print('b: ' + str((dt.datetime.utcnow() - timetmp).total_seconds))
             save_lidar(lidar_data, args.directory, s[1])
-            print('c')
+            print('c: ' + str((dt.datetime.utcnow() - timetmp).total_seconds))
             lidar_ids = [i[0] for i in lidar_data]
-            print('d')
+            print('d: ' + str((dt.datetime.utcnow() - timetmp).total_seconds))
             connection.execute(db.delete(lidar).where(lidar.columns.id.in_(lidar_ids)))
-            print('e')
+            print('e: ' + str((dt.datetime.utcnow() - timetmp).total_seconds))
             lidar_data = connection.execute(db.select([lidar])
                                             .where(lidar.columns.unix_time < unix_today)
                                             .where(lidar.columns.unix_time > unix_yesterday)
                                             .where(lidar.columns.station_id == s[0])
                                             .order_by(lidar.columns.unix_time)
                                             ).fetchmany(1000000)
-            print('f')
+            print('f: ' + str((dt.datetime.utcnow() - timetmp).total_seconds))
         if lidar_ids is not False:
             print("LiDAR Data saved for " + s[1])
 
