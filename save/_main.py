@@ -140,6 +140,9 @@ def main():
             rtow_st = (day - dt.datetime(1980, 1, 6)).total_seconds() % (7 * 24 * 3600)
             rtow_end = rtow_st + 24 * 3600
             print('a: ' + str((dt.datetime.utcnow()-timetmp).total_seconds()))
+            print(week)
+            print(rtow_st)
+            print(rtow_end)
 
             data = connection.execute(db.select([gps_raw])
                                       .where(gps_raw.columns.week == week)
