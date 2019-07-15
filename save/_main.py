@@ -135,9 +135,10 @@ def main():
                                        .where(lidar.columns.unix_time < unix_yesterday)
                                        .where(lidar.columns.station_id == s[0])
                                        .order_by(lidar.columns.unix_time)
-                                       ).fetchmany(2000000)
+                                       ).fetchmany(1000000)
         lidar_ids = False
         while len(lidar_old) > 0:
+            print('old lidar')
             day = dt.datetime(1970, 1, 1) + dt.timedelta(days=lidar_old[0][1]//(3600*24))
             unix_st = (day - dt.datetime(1970, 1, 1)).total_seconds()
             unix_end = (day + dt.timedelta(days=1) - dt.datetime(1970, 1, 1)).total_seconds()
@@ -155,7 +156,7 @@ def main():
                                            .where(lidar.columns.unix_time < unix_yesterday)
                                            .where(lidar.columns.station_id == s[0])
                                            .order_by(lidar.columns.unix_time)
-                                           ).fetchmany(2000000)
+                                           ).fetchmany(1000000)
 
         if lidar_ids is not False:
             print("Old LiDAR Data saved for " + s[1])
