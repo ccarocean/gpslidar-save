@@ -2,3 +2,4 @@ sqlalchemy
 numpy
 dataclasses;python_version=="3.6"
 psycopg2
+scipy

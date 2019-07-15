@@ -90,7 +90,6 @@ def main():
             print("GPS Position Data saved for " + s[1])
 
         # Raw GPS overall data for previous day
-        raw_list = []
         gpsraw_data = connection.execute(db.select([gps_raw])
                                          .where(gps_raw.columns.week == yesterday_week)
                                          .where((gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds) > yesterday_rtow)
@@ -100,22 +99,17 @@ def main():
                                          ).fetchmany(1000000)
         gpsraw_ids = False
         while len(gpsraw_data) > 0:
+            raw_list = []
             timetmp = dt.datetime.utcnow()
-            print('a')
             for i in gpsraw_data:
                 measurements = connection.execute(db.select([gps_measurement])
                                                   .where(gps_measurement.columns.gps_raw_id == i[0])
                                                   ).fetchall()
                 raw_list.append(RxmRawx(i[1], i[2], i[3], measurements))
-            print('b: ' + str((dt.datetime.utcnow() - timetmp).total_seconds()))
             save_raw_gps(raw_list, args.directory, s[1], s[2], s[3], s[4], s[6])
-            print('c: ' + str((dt.datetime.utcnow() - timetmp).total_seconds()))
             gpsraw_ids = [i[0] for i in gpsraw_data]
-            print('d: ' + str((dt.datetime.utcnow() - timetmp).total_seconds()))
             connection.execute(db.delete(gps_measurement).where(gps_measurement.columns.gps_raw_id.in_(gpsraw_ids)))
-            print('e: ' + str((dt.datetime.utcnow() - timetmp).total_seconds()))
             connection.execute(db.delete(gps_raw).where(gps_raw.columns.id.in_(gpsraw_ids)))
-            print('f: ' + str((dt.datetime.utcnow() - timetmp).total_seconds()))
             gpsraw_data = connection.execute(db.select([gps_raw])
                                              .where(gps_raw.columns.week == yesterday_week)
                                              .where((gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds) >
@@ -125,7 +119,6 @@ def main():
                                              .where(gps_raw.columns.station_id == s[0])
                                              .order_by(gps_raw.columns.week, gps_raw.columns.rcv_tow)
                                              ).fetchmany(1000000)
-            print('g: ' + str((dt.datetime.utcnow() - timetmp).total_seconds()))
 
         if gpsraw_ids is not False:
             print("Raw GPS Data saved for " + s[1])
@@ -213,7 +206,7 @@ def main():
                                                            yesterday_rtow)))
                                      .where(gps_raw.columns.station_id == s[0])
                                      .order_by(gps_raw.columns.week, gps_raw.columns.rcv_tow)
-                                     ).fetchmany(1000000)
+                                     ).fetchmany(1)
         gpsraw_ids = False
         while len(raw_old) > 0:
             day = dt.datetime(1980, 1, 6) + dt.timedelta(days=7 * raw_old[0][2]) + \
@@ -228,18 +221,28 @@ def main():
                                       .where((gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds) < rtow_end)
                                       .where(gps_raw.columns.station_id == s[0])
                                       .order_by(gps_raw.columns.week, gps_raw.columns.rcv_tow)
-                                      ).fetchall()
+                                      ).fetchmany(1000000)
 
-            for i in data:
-                old_measurements = connection.execute(db.select([gps_measurement])
+            while len(data) > 0:
+                raw_list = []
+                for i in gpsraw_data:
+                    measurements = connection.execute(db.select([gps_measurement])
                                                       .where(gps_measurement.columns.gps_raw_id == i[0])
                                                       ).fetchall()
-                raw_list.append(RxmRawx(i[1], i[2], i[3], old_measurements))
-
-            save_raw_gps(raw_list, args.directory, s[1], s[2], s[3], s[4], s[6])
-            gpsraw_ids = [i[0] for i in gpsraw_data]
-            connection.execute(db.delete(gps_measurement).where(gps_measurement.columns.gps_raw_id.in_(gpsraw_ids)))
-            connection.execute(db.delete(gps_raw).where(gps_raw.columns.id.in_(gpsraw_ids)))
+                    raw_list.append(RxmRawx(i[1], i[2], i[3], measurements))
+                save_raw_gps(raw_list, args.directory, s[1], s[2], s[3], s[4], s[6])
+                gpsraw_ids = [i[0] for i in gpsraw_data]
+                connection.execute(db.delete(gps_measurement).where(gps_measurement.columns.gps_raw_id.in_(gpsraw_ids)))
+                connection.execute(db.delete(gps_raw).where(gps_raw.columns.id.in_(gpsraw_ids)))
+                data = connection.execute(db.select([gps_raw])
+                                          .where(gps_raw.columns.week == yesterday_week)
+                                          .where((gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds) >
+                                                 yesterday_rtow)
+                                          .where((gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds) <
+                                                 today_rtow)
+                                          .where(gps_raw.columns.station_id == s[0])
+                                          .order_by(gps_raw.columns.week, gps_raw.columns.rcv_tow)
+                                          ).fetchmany(1000000)
 
             raw_old = connection.execute(db.select([gps_raw])
                                          .where(db.or_(gps_raw.columns.week < yesterday_week,
@@ -248,7 +251,7 @@ def main():
                                                                < yesterday_rtow)))
                                          .where(gps_raw.columns.station_id == s[0])
                                          .order_by(gps_raw.columns.week, gps_raw.columns.rcv_tow)
-                                         ).fetchmany(1000000)
+                                         ).fetchmany(1)
 
         if gpsraw_ids is not False:
             print("Old Raw GPS Data saved for " + s[1])
