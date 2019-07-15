@@ -145,9 +145,16 @@ def main():
             print(rtow_end)
 
             data = connection.execute(db.select([gps_raw])
-                                      .where(gps_raw.columns.week == week)
-                                      .where((gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds) > rtow_st)
-                                      .where((gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds) < rtow_end)
+                                      .where(db.or_(db.and_(gps_raw.columns.week == week,
+                                                            (gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds) <
+                                                            rtow_end,
+                                                            (gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds) >
+                                                            rtow_st),
+                                                    db.and_(gps_raw.columns.week == (week+1),
+                                                            (gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds) <
+                                                            0)
+                                                    )
+                                             )
                                       .where(gps_raw.columns.station_id == s[0])
                                       .order_by(gps_raw.columns.week, gps_raw.columns.rcv_tow)
                                       ).fetchmany(100000)
@@ -170,9 +177,19 @@ def main():
                 connection.execute(db.delete(gps_raw).where(gps_raw.columns.id.in_(gpsraw_ids)))
                 print('g: ' + str((dt.datetime.utcnow()-timetmp).total_seconds()))
                 data = connection.execute(db.select([gps_raw])
-                                          .where(gps_raw.columns.week == week)
-                                          .where((gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds) > rtow_st)
-                                          .where((gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds) < rtow_end)
+                                          .where(db.or_(db.and_(gps_raw.columns.week == week,
+                                                                (
+                                                                            gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds) <
+                                                                rtow_end,
+                                                                (
+                                                                            gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds) >
+                                                                rtow_st),
+                                                        db.and_(gps_raw.columns.week == (week + 1),
+                                                                (
+                                                                            gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds) <
+                                                                0)
+                                                        )
+                                                 )
                                           .where(gps_raw.columns.station_id == s[0])
                                           .order_by(gps_raw.columns.week, gps_raw.columns.rcv_tow)
                                           ).fetchmany(100000)
