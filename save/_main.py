@@ -59,7 +59,7 @@ def main():
                                         .where(lidar.columns.unix_time > unix_yesterday)
                                         .where(lidar.columns.station_id == s[0])
                                         .order_by(lidar.columns.unix_time)
-                                        ).fetchmany(1000000)
+                                        ).fetchmany(5000000)
 
         lidar_ids = False
         while len(lidar_data) > 0:
@@ -71,7 +71,7 @@ def main():
                                             .where(lidar.columns.unix_time > unix_yesterday)
                                             .where(lidar.columns.station_id == s[0])
                                             .order_by(lidar.columns.unix_time)
-                                            ).fetchmany(1000000)
+                                            ).fetchmany(5000000)
         if lidar_ids is not False:
             print("LiDAR Data saved for " + s[1])
 
@@ -136,6 +136,7 @@ def main():
                                        .where(lidar.columns.station_id == s[0])
                                        .order_by(lidar.columns.unix_time)
                                        ).fetchmany(1)
+
         lidar_ids = False
         while len(lidar_old) > 0:
             print('old lidar')
@@ -163,7 +164,7 @@ def main():
                                            .where(lidar.columns.unix_time < unix_yesterday)
                                            .where(lidar.columns.station_id == s[0])
                                            .order_by(lidar.columns.unix_time)
-                                           ).fetchone()
+                                           ).fetchmany(1)
 
         if lidar_ids is not False:
             print("Old LiDAR Data saved for " + s[1])
