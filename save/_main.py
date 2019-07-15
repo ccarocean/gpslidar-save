@@ -152,11 +152,15 @@ def main():
 
             while len(data) > 0:
                 raw_list = []
+                gpsraw_ids = [i[0] for i in data]
+                tmp = connection.execute(db.select([gps_measurement])
+                                         .where(gps_measurement.columns.gps_raw_id.in_(gpsraw_ids)))
                 for i in data:
                     print('first: ' + str((dt.datetime.utcnow() - timetmp).total_seconds()))
-                    measurements = connection.execute(db.select([gps_measurement])
-                                                      .where(gps_measurement.columns.gps_raw_id == i[0])
-                                                      ).fetchall()
+                    #measurements = connection.execute(db.select([gps_measurement])
+                    #                                  .where(gps_measurement.columns.gps_raw_id == i[0])
+                    #                                  ).fetchall()
+                    measurements = [j for j in tmp if j[0] == i[0]]
                     print('second: ' + str((dt.datetime.utcnow() - timetmp).total_seconds()))
                     raw_list.append(RxmRawx(i[1], i[2], i[3], measurements))
                     print('third: ' + str((dt.datetime.utcnow() - timetmp).total_seconds()))
