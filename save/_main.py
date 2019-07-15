@@ -157,18 +157,14 @@ def main():
                                          .where(gps_measurement.columns.gps_raw_id.in_(gpsraw_ids))).fetchall()
                 for i in data:
                     print('first: ' + str((dt.datetime.utcnow() - timetmp).total_seconds()))
-                    measurements1 = connection.execute(db.select([gps_measurement])
+                    measurements = connection.execute(db.select([gps_measurement])
                                                       .where(gps_measurement.columns.gps_raw_id == i[0])
                                                       ).fetchall()
-                    measurements2 = [j for j in tmp if j[8] == i[0]]
-                    import pdb; pdb.set_trace()
-                    print(measurements1)
-                    print('\n')
-                    print(measurements2)
-                    input()
                     print('second: ' + str((dt.datetime.utcnow() - timetmp).total_seconds()))
-                    raw_list.append(RxmRawx(i[1], i[2], i[3], measurements))
+                    measurements2 = [j for j in tmp if j[8] == i[0]]
                     print('third: ' + str((dt.datetime.utcnow() - timetmp).total_seconds()))
+                    raw_list.append(RxmRawx(i[1], i[2], i[3], measurements))
+                    print('fourth: ' + str((dt.datetime.utcnow() - timetmp).total_seconds()))
                 print('c: ' + str((dt.datetime.utcnow()-timetmp).total_seconds()))
                 save_raw_gps(raw_list, args.directory, s[1], s[2], s[3], s[4], s[6])
                 print('d: ' + str((dt.datetime.utcnow()-timetmp).total_seconds()))
