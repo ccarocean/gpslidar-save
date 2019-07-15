@@ -71,7 +71,7 @@ def main():
             lidar_ids = [i[0] for i in lidar_data]
             print('d: ' + str((dt.datetime.utcnow() - timetmp).total_seconds()))
             connection.execute(db.delete(lidar).where(lidar.columns.id.in_(lidar_ids)))
-            print('e: ' + str((dt.datetime.utcnow() - timetmp).total_seconds))
+            print('e: ' + str((dt.datetime.utcnow() - timetmp).total_seconds()))
             lidar_data = connection.execute(db.select([lidar])
                                             .where(lidar.columns.unix_time < unix_today)
                                             .where(lidar.columns.unix_time > unix_yesterday)
