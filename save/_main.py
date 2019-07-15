@@ -151,7 +151,7 @@ def main():
                                                             (gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds) >
                                                             rtow_st),
                                                     db.and_(gps_raw.columns.week == (week+1),
-                                                            (gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds) <
+                                                            (gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds) <=
                                                             0)
                                                     )
                                              )
@@ -186,7 +186,7 @@ def main():
                                                                 rtow_st),
                                                         db.and_(gps_raw.columns.week == (week + 1),
                                                                 (
-                                                                            gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds) <
+                                                                            gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds) <=
                                                                 0)
                                                         )
                                                  )
