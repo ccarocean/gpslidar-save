@@ -71,7 +71,7 @@ def main():
                                             .where(lidar.columns.station_id == s[0])
                                             .order_by(lidar.columns.unix_time)
                                             ).fetchmany(1000000)
-        if lidar_ids:
+        if lidar_ids is not False:
             print("LiDAR Data saved for " + s[1])
 
         # GPS Position for previous day
@@ -117,7 +117,7 @@ def main():
                                              .order_by(gps_raw.columns.week, gps_raw.columns.rcv_tow)
                                              ).fetchmany(1000000)
 
-        if gpsraw_ids:
+        if gpsraw_ids is not False:
             print("Raw GPS Data saved for " + s[1])
 
         # Check if old lidar data exists
@@ -147,7 +147,7 @@ def main():
                                            .order_by(lidar.columns.unix_time)
                                            ).fetchmany(1000000)
 
-        if lidar_ids:
+        if lidar_ids is not False:
             print("Old LiDAR Data saved for " + s[1])
 
         # Check if old position data exists
@@ -231,5 +231,5 @@ def main():
                                          .order_by(gps_raw.columns.week, gps_raw.columns.rcv_tow)
                                          ).fetchmany(1000000)
 
-        if gpsraw_ids:
+        if gpsraw_ids is not False:
             print("Old Raw GPS Data saved for " + s[1])
