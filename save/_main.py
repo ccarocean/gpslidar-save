@@ -183,6 +183,7 @@ def main():
                                           .where(gps_raw.columns.station_id == s[0])
                                           .order_by(gps_raw.columns.week, gps_raw.columns.rcv_tow)
                                           ).fetchmany(1)
+            print(raw_data)
 
             print('i: ' + str((dt.datetime.utcnow() - timetmp).total_seconds()))
 
