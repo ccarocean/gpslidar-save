@@ -160,7 +160,7 @@ def main():
                     measurements1 = connection.execute(db.select([gps_measurement])
                                                       .where(gps_measurement.columns.gps_raw_id == i[0])
                                                       ).fetchall()
-                    measurements2 = [j for j in tmp if j[0] == i[0]]
+                    measurements2 = [j for j in tmp if j[8] == i[0]]
                     import pdb; pdb.set_trace()
                     print(measurements1)
                     print('\n')
