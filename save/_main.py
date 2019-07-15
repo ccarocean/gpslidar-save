@@ -133,16 +133,11 @@ def main():
                                       ).fetchmany(1)
 
         while len(raw_data) > 0:
-            timetmp = dt.datetime.utcnow()
             day = dt.datetime(1980, 1, 6) + dt.timedelta(days=7 * raw_data[0][2]) + \
                   dt.timedelta(days=(raw_data[0][1]-raw_data[0][3]) // (3600 * 24))
             week = (day - dt.datetime(1980, 1, 6)).total_seconds() / (3600 * 24) // 7
             rtow_st = (day - dt.datetime(1980, 1, 6)).total_seconds() % (7 * 24 * 3600)
             rtow_end = rtow_st + 24 * 3600
-            print('a: ' + str((dt.datetime.utcnow()-timetmp).total_seconds()))
-            print(week)
-            print(rtow_st)
-            print(rtow_end)
 
             data = connection.execute(db.select([gps_raw])
                                       .where(db.or_(db.and_(gps_raw.columns.week == week,
@@ -158,7 +153,6 @@ def main():
                                       .where(gps_raw.columns.station_id == s[0])
                                       .order_by(gps_raw.columns.week, gps_raw.columns.rcv_tow)
                                       ).fetchmany(100000)
-            print('b: ' + str((dt.datetime.utcnow()-timetmp).total_seconds()))
 
             while len(data) > 0:
                 raw_list = []
@@ -167,15 +161,10 @@ def main():
                                                       .where(gps_measurement.columns.gps_raw_id == i[0])
                                                       ).fetchall()
                     raw_list.append(RxmRawx(i[1], i[2], i[3], measurements))
-                print('c: ' + str((dt.datetime.utcnow()-timetmp).total_seconds()))
                 save_raw_gps(raw_list, args.directory, s[1], s[2], s[3], s[4], s[6])
-                print('d: ' + str((dt.datetime.utcnow()-timetmp).total_seconds()))
                 gpsraw_ids = [i[0] for i in data]
-                print('e: ' + str((dt.datetime.utcnow()-timetmp).total_seconds()))
                 connection.execute(db.delete(gps_measurement).where(gps_measurement.columns.gps_raw_id.in_(gpsraw_ids)))
-                print('f: ' + str((dt.datetime.utcnow()-timetmp).total_seconds()))
                 connection.execute(db.delete(gps_raw).where(gps_raw.columns.id.in_(gpsraw_ids)))
-                print('g: ' + str((dt.datetime.utcnow()-timetmp).total_seconds()))
                 data = connection.execute(db.select([gps_raw])
                                           .where(db.or_(db.and_(gps_raw.columns.week == week,
                                                                 (
@@ -193,7 +182,6 @@ def main():
                                           .where(gps_raw.columns.station_id == s[0])
                                           .order_by(gps_raw.columns.week, gps_raw.columns.rcv_tow)
                                           ).fetchmany(100000)
-                print('h: ' + str((dt.datetime.utcnow()-timetmp).total_seconds()))
 
             raw_data = connection.execute(db.select([gps_raw])
                                           .where(db.or_(gps_raw.columns.week < today_week,
@@ -203,8 +191,5 @@ def main():
                                           .where(gps_raw.columns.station_id == s[0])
                                           .order_by(gps_raw.columns.week, gps_raw.columns.rcv_tow)
                                           ).fetchmany(1)
-            print(raw_data)
-
-            print('i: ' + str((dt.datetime.utcnow() - timetmp).total_seconds()))
 
             print("Raw GPS Data saved for " + s[1] + ': ' + day.strftime('%Y-%m-%d'))
