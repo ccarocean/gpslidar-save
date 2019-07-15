@@ -147,14 +147,14 @@ def main():
                                       .where((gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds) < rtow_end)
                                       .where(gps_raw.columns.station_id == s[0])
                                       .order_by(gps_raw.columns.week, gps_raw.columns.rcv_tow)
-                                      ).fetchmany(1000000)
+                                      ).fetchmany(100000)
             print('b: ' + str((dt.datetime.utcnow()-timetmp).total_seconds()))
 
             while len(data) > 0:
                 raw_list = []
                 gpsraw_ids = [i[0] for i in data]
                 tmp = connection.execute(db.select([gps_measurement])
-                                         .where(gps_measurement.columns.gps_raw_id.in_(gpsraw_ids)))
+                                         .where(gps_measurement.columns.gps_raw_id.in_(gpsraw_ids))).fetchall()
                 for i in data:
                     print('first: ' + str((dt.datetime.utcnow() - timetmp).total_seconds()))
                     measurements1 = connection.execute(db.select([gps_measurement])
@@ -184,7 +184,7 @@ def main():
                                           .where((gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds) < rtow_end)
                                           .where(gps_raw.columns.station_id == s[0])
                                           .order_by(gps_raw.columns.week, gps_raw.columns.rcv_tow)
-                                          ).fetchmany(1000000)
+                                          ).fetchmany(100000)
                 print('h: ' + str((dt.datetime.utcnow()-timetmp).total_seconds()))
 
             raw_data = connection.execute(db.select([gps_raw])
