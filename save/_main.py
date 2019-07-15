@@ -152,7 +152,7 @@ def main():
                                                             rtow_st),
                                                     db.and_(gps_raw.columns.week == (week+1),
                                                             (gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds) <=
-                                                            0.0)
+                                                            0.01)
                                                     )
                                              )
                                       .where(gps_raw.columns.station_id == s[0])
