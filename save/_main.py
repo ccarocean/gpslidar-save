@@ -101,16 +101,21 @@ def main():
                                          ).fetchmany(1000000)
         gpsraw_ids = False
         while len(gpsraw_data) > 0:
+            print('a')
             for i in gpsraw_data:
                 measurements = connection.execute(db.select([gps_measurement])
                                                   .where(gps_measurement.columns.gps_raw_id == i[0])
                                                   ).fetchall()
                 raw_list.append(RxmRawx(i[1], i[2], i[3], measurements))
-
+            print('b')
             save_raw_gps(raw_list, args.directory, s[1], s[2], s[3], s[4], s[6])
+            print('c')
             gpsraw_ids = [i[0] for i in gpsraw_data]
+            print('d')
             connection.execute(db.delete(gps_measurement).where(gps_measurement.columns.gps_raw_id.in_(gpsraw_ids)))
+            print('e')
             connection.execute(db.delete(gps_raw).where(gps_raw.columns.id.in_(gpsraw_ids)))
+            print('f')
             gpsraw_data = connection.execute(db.select([gps_raw])
                                              .where(gps_raw.columns.week == yesterday_week)
                                              .where((gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds) > yesterday_rtow)
@@ -118,6 +123,7 @@ def main():
                                              .where(gps_raw.columns.station_id == s[0])
                                              .order_by(gps_raw.columns.week, gps_raw.columns.rcv_tow)
                                              ).fetchmany(1000000)
+            print('g')
 
         if gpsraw_ids is not False:
             print("Raw GPS Data saved for " + s[1])
