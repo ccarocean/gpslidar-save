@@ -30,13 +30,6 @@ def main():
     # Stations
     stations_data = connection.execute(db.select([stations])).fetchall()
 
-    now = dt.datetime.utcnow()
-    today = dt.datetime(now.year, now.month, now.day)
-    unix_today = (today - dt.datetime(1970, 1, 1)).total_seconds()
-    today_week = (today - dt.datetime(1980, 1, 6)).total_seconds() / (3600 * 24) // 7
-    today_itow = (today - dt.datetime(1980, 1, 6)).total_seconds() % (7 * 24 * 3600) * 1000
-    today_rtow = (today - dt.datetime(1980, 1, 6)).total_seconds() % (7 * 24 * 3600)
-
     for s in stations_data:
         # Make directories if they don't exist
         if not os.path.isdir(os.path.join(args.directory, s[1])):
