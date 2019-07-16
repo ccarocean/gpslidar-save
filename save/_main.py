@@ -52,7 +52,6 @@ def main():
 
         # Save lidar data
         lidar_data = connection.execute(db.select([lidar])
-                                        .where(lidar.columns.unix_time < unix_today)
                                         .where(lidar.columns.station_id == s[0])
                                         .order_by(lidar.columns.unix_time)
                                         ).fetchmany(1)
@@ -79,7 +78,6 @@ def main():
                                           .order_by(lidar.columns.unix_time)
                                           ).fetchmany(5000000)
             lidar_data = connection.execute(db.select([lidar])
-                                            .where(lidar.columns.unix_time < unix_today)
                                             .where(lidar.columns.station_id == s[0])
                                             .order_by(lidar.columns.unix_time)
                                             ).fetchmany(1)
@@ -88,9 +86,6 @@ def main():
 
         # Save position data
         pos_data = connection.execute(db.select([gps_position])
-                                      .where(db.or_(gps_position.columns.week < today_week,
-                                                    db.and_(gps_position.columns.week == today_week,
-                                                            gps_position.columns.i_tow < today_itow)))
                                       .where(gps_position.columns.station_id == s[0])
                                       .order_by(gps_position.columns.week, gps_position.columns.i_tow)
                                       ).fetchmany(1)
@@ -115,19 +110,12 @@ def main():
             connection.execute(db.delete(gps_position).where(gps_position.columns.id.in_(gpspos_ids)))
             print("GPS Position Data saved for " + s[1] + ': ' + day.strftime('%Y-%m-%d'))
             pos_data = connection.execute(db.select([gps_position])
-                                          .where(db.or_(gps_position.columns.week < today_week,
-                                                        db.and_(gps_position.columns.week == today_week,
-                                                                gps_position.columns.i_tow < today_itow)))
                                           .where(gps_position.columns.station_id == s[0])
                                           .order_by(gps_position.columns.week, gps_position.columns.i_tow)
                                           ).fetchall()
 
         # Save raw gps data
         raw_data = connection.execute(db.select([gps_raw])
-                                      .where(db.or_(gps_raw.columns.week < today_week,
-                                                    db.and_(gps_raw.columns.week == today_week,
-                                                            (gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds) <
-                                                            today_rtow)))
                                       .where(gps_raw.columns.station_id == s[0])
                                       .order_by(gps_raw.columns.week, gps_raw.columns.rcv_tow)
                                       ).fetchmany(1)
@@ -184,10 +172,6 @@ def main():
                                           ).fetchmany(100000)
 
             raw_data = connection.execute(db.select([gps_raw])
-                                          .where(db.or_(gps_raw.columns.week < today_week,
-                                                        db.and_(gps_raw.columns.week == today_week,
-                                                                (gps_raw.columns.rcv_tow - gps_raw.columns.leap_seconds)
-                                                                < today_rtow)))
                                           .where(gps_raw.columns.station_id == s[0])
                                           .order_by(gps_raw.columns.week, gps_raw.columns.rcv_tow)
                                           ).fetchmany(1)
