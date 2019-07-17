@@ -3,13 +3,6 @@ Program for saving lidar and GPS data from postgresql database
 
 Title: gpslidar-save
 
-Options
--------
-optional arguments:
-  -h, --help            show this help message and exit
-  -d DIRECTORY, --directory DIRECTORY
-                        Directory for output data. Default is /srv/data/gpslidar.
-
 Installation
 ------------
 Create virtual environment:
@@ -43,7 +36,9 @@ Run:
 
 Related Files
 -------------
-- Desired output data directory, where the default is /srv/data/gpslidar/<location>/<type>
+- Desired output data directory, most likely /srv/data/gpslidar/ on cods
+- GPSLIDARDATADIRECTORY environment variable is read to give location to save data
+- GPSLIDAR_DNAME is read to give database URI (with credentials, if necessary)
 
 Author
 ------
@@ -59,4 +54,5 @@ Purpose
 -------
 This program is for taking data from the database containing gps and lidar data and saving it to a file for later use.
 The program then deletes the data from the database to ensure a quick and clean database. It saves the raw gps data to
-Rinex observation files to be used for high precision gps positioning.
+Rinex observation files to be used for high precision gps positioning. It also averages the lidar data down to six
+minute data for comparison with NOAA data.
