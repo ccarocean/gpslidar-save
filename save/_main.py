@@ -73,7 +73,7 @@ def main():
                                             ).fetchmany(1)  # Do part of do-while loop
             six_min(day, s[1])  # Average data to six minutes for comparison to NOAA data
             print("LiDAR Data saved for " + s[1] + ': ' + day.strftime('%Y-%m-%d'))
-        check_for_coops(coops_dir, monthly_dir, data_dir, s[1])
+        check_for_coops(data_dir, s[1])
 
         # Grab first position data point for station
         pos_data = connection.execute(db.select([gps_position])
