@@ -6,7 +6,7 @@ def load_cata_coops(coops_dir, date):
     data = []
     firstline = True
     try:
-        with open(os.path.join(coops_dir, 'cata', date.strftime('%Y-%m.csv')), 'r') as f:
+        with open(os.path.join(coops_dir, date.strftime('%Y-%m.csv')), 'r') as f:
             alldata = f.readlines()
             for line in alldata:
                 if firstline:
@@ -26,7 +26,7 @@ def load_harv_coops(coops_dir, date):
     data = []
     firstline = True
     try:
-        with open(os.path.join(coops_dir, 'harv', date.strftime('%Y-%m.csv')), 'r') as f:
+        with open(os.path.join(coops_dir, date.strftime('%Y-%m.csv')), 'r') as f:
             alldata = f.readlines()
             for line in alldata:
                 if firstline:
@@ -42,14 +42,14 @@ def load_harv_coops(coops_dir, date):
         return None
 
 
-def load_lidar(lidar_dir, loc, month):
+def load_lidar(lidar_dir, month):
     data = []
     firstline = True
-    for root, dirs, files in os.walk(os.path.join(lidar_dir, loc)):
+    for root, dirs, files in os.walk(lidar_dir):
         for i in sorted(files):
             date = dt.datetime.strptime(i, '%Y-%m-%d.txt')
             if date.month == month.month and date.year == month.year:
-                with open(os.path.join(lidar_dir, loc, i), 'r') as f:
+                with open(os.path.join(lidar_dir, i), 'r') as f:
                     alldata = f.readlines()
                     for line in alldata:
                         if firstline:
