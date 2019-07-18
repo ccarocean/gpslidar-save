@@ -2,7 +2,7 @@ import datetime as dt
 import os
 from collections import defaultdict
 from operator import itemgetter
-from .loading import load_cata_coops, load_harv_coops, load_lidar
+from .loading import load_cata_coops, load_harv_coops, load_alllidar
 
 
 def check_for_coops(data_dir, loc):
@@ -19,14 +19,14 @@ def monthly_product(data_dir, loc, date):
         if coops_data is None:
             return None
 
-        lidar_data = load_lidar(os.path.join(data_dir, loc, 'lidar_sixmin'), date)
+        lidar_data = load_alllidar(os.path.join(data_dir, loc, 'lidar_sixmin'), date)
 
     elif loc == 'cata':
         coops_data = load_cata_coops(os.path.join(data_dir, loc, 'co-ops'), date)
         if coops_data is None:
             return None
 
-        lidar_data = load_lidar(os.path.join(data_dir, loc, 'co-ops'), date)
+        lidar_data = load_alllidar(os.path.join(data_dir, loc, 'co-ops'), date)
 
     else:
         return None

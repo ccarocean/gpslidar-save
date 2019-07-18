@@ -32,6 +32,10 @@ def main():
             os.mkdir(os.path.join(data_dir, s[1]))
         if not os.path.isdir(os.path.join(data_dir, s[1], 'lidar')):
             os.mkdir(os.path.join(data_dir, s[1], 'lidar'))
+        if not os.path.isdir(os.path.join(data_dir, s[1], 'lidar_monthly')):
+            os.mkdir(os.path.join(data_dir, s[1], 'lidar_monthly'))
+        if not os.path.isdir(os.path.join(data_dir, s[1], 'co-ops')):
+            os.mkdir(os.path.join(data_dir, s[1], 'co-ops'))
         if not os.path.isdir(os.path.join(data_dir, s[1], 'lidar_sixmin')):
             os.mkdir(os.path.join(data_dir, s[1], 'lidar_sixmin'))
         if not os.path.isdir(os.path.join(data_dir, s[1], 'position')):

@@ -14,7 +14,7 @@ def six_min(t0, loc):
     m = t0.month
     day = t0.day
 
-    bias = 0 # TODO: What should bias be
+    bias = 0  # TODO: What should bias be
     t0 = dt.datetime(y, m, day)
 
     f_prev_raw = f'/srv/data/gpslidar/{loc}/lidar/{y_prev}-{m_prev:>02d}-{day_prev:>02d}.txt'
@@ -46,7 +46,6 @@ def six_min(t0, loc):
     t = np.array(t)
     meas = np.array(meas)
 
-    print('Averaging data...')
     sixmin_measvec = []
 
     td_3m = 3*60

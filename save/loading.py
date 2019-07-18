@@ -42,22 +42,28 @@ def load_harv_coops(coops_dir, date):
         return None
 
 
-def load_lidar(lidar_dir, month):
+def load_alllidar(lidar_dir, month):
     data = []
-    firstline = True
     for root, dirs, files in os.walk(lidar_dir):
         for i in sorted(files):
             date = dt.datetime.strptime(i, '%Y-%m-%d.txt')
             if date.month == month.month and date.year == month.year:
-                with open(os.path.join(lidar_dir, i), 'r') as f:
-                    alldata = f.readlines()
-                    for line in alldata:
-                        if firstline:
-                            firstline = False
-                        else:
-                            d = line.split()
-                            data.append({'time': dt.datetime.strptime(d[0] + ' ' + d[1], '%Y-%m-%d %H:%M:%S'),
-                                         'l_mean': d[2], 'l_max': d[3], 'l_min': d[4], 'l_median': d[5], 'l_n': d[6],
-                                         'l_skew': d[7], 'l_std': d[8], 'l_Hs': d[9], 'l': d[10]
-                                         })
+                data.append(load_lidar(lidar_dir, date))
+    return data
+
+
+def load_lidar(lidar_dir, date):
+    data = []
+    firstline = True
+    with open(os.path.join(lidar_dir, dt.datetime.strftime(date, '%Y-%m-%d.txt')), 'r') as f:
+        alldata = f.readlines()
+        for line in alldata:
+            if firstline:
+                firstline = False
+            else:
+                d = line.split()
+                data.append({'time': dt.datetime.strptime(d[0] + ' ' + d[1], '%Y-%m-%d %H:%M:%S'),
+                             'l_mean': d[2], 'l_max': d[3], 'l_min': d[4], 'l_median': d[5], 'l_n': d[6],
+                             'l_skew': d[7], 'l_std': d[8], 'l_Hs': d[9], 'l': d[10]
+                             })
     return data
