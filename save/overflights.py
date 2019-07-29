@@ -2,16 +2,7 @@ import datetime as dt
 import os
 import numpy as np
 from scipy import stats
-from .loading import load_lidar
-
-
-def load_raw_lidar(f_raw):
-    data = []
-    with open(f_raw, 'r') as f:
-        for i in f.readlines():
-            d = i.split()
-            data.append({'time': float(d[0]), 'meas': float(d[1])})
-    return data
+from .loading import load_lidar, load_raw_lidar
 
 
 def quadreg_lid(x, y, t, day):

@@ -67,3 +67,12 @@ def load_lidar(lidar_dir, date):
                              'l_skew': d[7], 'l_std': d[8], 'l_Hs': d[9], 'l': d[10]
                              })
     return data
+
+
+def load_raw_lidar(f_raw):
+    data = []
+    with open(f_raw, 'r') as f:
+        for i in f.readlines():
+            d = i.split()
+            data.append({'time': float(d[0]), 'meas': float(d[1])})
+    return data

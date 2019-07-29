@@ -5,6 +5,7 @@ from .save import save_gps_pos, save_raw_gps, save_lidar
 from .messages import RxmRawx
 from .avg import six_min
 from .coops import check_for_coops
+from .plot import plot_lidar
 
 
 def main():
@@ -42,6 +43,8 @@ def main():
             os.mkdir(os.path.join(data_dir, s[1], 'position'))
         if not os.path.isdir(os.path.join(data_dir, s[1], 'rawgps')):
             os.mkdir(os.path.join(data_dir, s[1], 'rawgps'))
+        if not os.path.isdir(os.path.join(data_dir, s[1], 'plots')):
+            os.mkdir(os.path.join(data_dir, s[1], 'plots'))
 
         # Grab first lidar data point for station
         lidar_data = connection.execute(db.select([lidar])
@@ -174,3 +177,5 @@ def main():
                                           ).fetchmany(1)  # Do part of do-while loop
 
             print("Raw GPS Data saved for " + s[1] + ': ' + day.strftime('%Y-%m-%d'))
+
+        plot_lidar(s[1], os.path.join(data_dir, s[1], 'plots'), os.path.join(data_dir, s[1], 'lidar_sixmin'))
