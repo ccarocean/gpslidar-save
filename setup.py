@@ -32,6 +32,7 @@ setup(
         'numpy',
         'psycopg2',
         'scipy',
+        'matplotlib',
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',
