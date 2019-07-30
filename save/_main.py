@@ -177,5 +177,5 @@ def main():
                                           ).fetchmany(1)  # Do part of do-while loop
 
             print("Raw GPS Data saved for " + s[1] + ': ' + day.strftime('%Y-%m-%d'))
-
+        print(s)
         plot_lidar(s[1], os.path.join(data_dir, s[1], 'plots'), os.path.join(data_dir, s[1], 'lidar_sixmin'))
