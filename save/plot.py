@@ -10,7 +10,8 @@ def plot_lidar(loc, save_dir, data_dir):
     for root, dirs, files in os.walk(data_dir):
         for i in sorted(files):
             date = dt.datetime.strptime(i, '%Y-%m-%d.txt')
-            data.append(load_lidar(data_dir, date))
+            for j in load_lidar(data_dir, date):
+                data.appaend(j)
 
     td = dt.datetime.utcnow() - dt.timedelta(days=1)
     td = dt.datetime(td.year, td.month, td.day)
