@@ -39,6 +39,7 @@ def plot_lidar(loc, save_dir, data_dir):
     plt.xlabel('Date')
     plt.ylabel('Distance from LIDAR (cm)')
     plt.savefig(os.path.join(save_dir, 'all_lidar.png'), bbox_inches='tight')
+    plt.close()
 
     # Plot weeks height data
     plt.figure(figsize=(12, 10), dpi=80, facecolor='w')
@@ -49,6 +50,7 @@ def plot_lidar(loc, save_dir, data_dir):
     plt.xlabel('Date')
     plt.ylabel('Distance from LIDAR (m)')
     plt.savefig(os.path.join(save_dir, 'week_lidar.png'), bbox_inches='tight')
+    plt.close()
 
     # Plot yesterday's height data
     plt.figure(figsize=(12, 10), dpi=80, facecolor='w')
@@ -59,3 +61,4 @@ def plot_lidar(loc, save_dir, data_dir):
     plt.xlabel('Date')
     plt.ylabel('Distance from LIDAR (m)')
     plt.savefig(os.path.join(save_dir, 'day_lidar.png'), bbox_inches='tight')
+    plt.close()
