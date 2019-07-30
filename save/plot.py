@@ -33,7 +33,7 @@ def plot_lidar(longname, save_dir, data_dir):
     # Plot all Height Data
     plt.figure(figsize=(12, 10), dpi=80, facecolor='w')
     plt.plot(time, height, 'bo', markersize=3)
-    plt.title('All ' + longname + ' LIDAR Height Data')
+    plt.title('All LIDAR Height Data from ' + longname)
     plt.xticks(rotation=90)
     plt.grid(b=True)
     plt.xlabel('Date')
@@ -44,7 +44,7 @@ def plot_lidar(longname, save_dir, data_dir):
     # Plot weeks height data
     plt.figure(figsize=(12, 10), dpi=80, facecolor='w')
     plt.plot(time_week, height_week, 'bo')
-    plt.title('Recent ' + longname + ' LIDAR Height Data')
+    plt.title('Week\'s LIDAR Height Data from ' +  longname)
     plt.xticks(rotation=90)
     plt.grid(b=True)
     plt.xlabel('Date')
@@ -55,7 +55,7 @@ def plot_lidar(longname, save_dir, data_dir):
     # Plot yesterday's height data
     plt.figure(figsize=(12, 10), dpi=80, facecolor='w')
     plt.plot(time_today, height_today, 'bo')
-    plt.title('Today\'s ' + longname + ' LIDAR Height Data')
+    plt.title('Today\'s LIDAR Height Data from ' + longname)
     plt.xticks(rotation=90)
     plt.grid(b=True)
     plt.xlabel('Date')
