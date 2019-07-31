@@ -76,6 +76,14 @@ def plot_gps(longname, save_dir, data_dir):
     lon = np.array([float(i['lon']) for i in data])
     alt = np.array([float(i['alt']) for i in data])
 
+    latstd, latmean = np.std(lat), np.mean(lat)
+    lonstd, lonmean = np.std(lon), np.mean(lon)
+    altstd, altmean = np.std(alt), np.mean(alt)
+
+    lat = lat[np.where(np.abs(lat - latmean) < 3*latstd)]
+    lon = lon[np.where(np.abs(lon - lonmean) < 3*lonstd)]
+    alt = alt[np.where(np.abs(alt - altmean) < 3*altstd)]
+
     # Plot lat, lon, and alt in subplots
     fig, axs = plt.subplots(3, 1, figsize=(12, 10), dpi=80, facecolor='w', sharex=True)
     axs[0].plot(time, lat, 'bo', markersize=3)
