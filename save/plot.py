@@ -81,22 +81,22 @@ def plot_gps(longname, save_dir, data_dir):
     altstd, altmean = np.std(alt), np.mean(alt)
     print(latstd, latmean)
 
-    indlat = np.where(np.abs(lat - latmean) < 0.05*latstd)
-    indlon = np.where(np.abs(lon - lonmean) < 0.05*lonstd)
+    indlat = np.where(np.abs(lat - latmean) < 0.035*latstd)
+    indlon = np.where(np.abs(lon - lonmean) < 0.035*lonstd)
     indalt = np.where(np.abs(alt - altmean) < 3*altstd)
-    lat = lat[indlat]
-    lon = lon[indlon]
-    alt = alt[indalt]
+    lat_no = lat[indlat]
+    lon_no = lon[indlon]
+    alt_no = alt[indalt]
     timelat = time[indlat]
     timelon = time[indlon]
     timealt = time[indalt]
 
     # Plot lat, lon, and alt in subplots
     fig, axs = plt.subplots(3, 1, figsize=(12, 10), dpi=80, facecolor='w', sharex=True)
-    axs[0].plot(timelat, lat, 'bo', markersize=3)
-    axs[1].plot(timelon, lon, 'bo', markersize=3)
-    axs[2].plot(timealt, alt, 'bo', markersize=3)
-    plt.suptitle('All gps data from ' + longname)
+    axs[0].plot(time, lat, 'bo', markersize=3)
+    axs[1].plot(time, lon, 'bo', markersize=3)
+    axs[2].plot(time, alt, 'bo', markersize=3)
+    plt.suptitle('All GPS Data from ' + longname)
     plt.xticks(rotation=90)
     plt.grid(b=True)
     axs[2].set_xlabel('Date')
@@ -104,4 +104,18 @@ def plot_gps(longname, save_dir, data_dir):
     axs[1].set_ylabel(u'Longitude [\N{DEGREE SIGN}]')
     axs[2].set_ylabel('Altitude [m]')
     plt.savefig(os.path.join(save_dir, 'all_gps.png'), bbox_inches='tight')
+    plt.close()
+
+    fig, axs = plt.subplots(3, 1, figsize=(12, 10), dpi=80, facecolor='w', sharex=True)
+    axs[0].plot(timelat, lat_no, 'bo', markersize=3)
+    axs[1].plot(timelon, lon_no, 'bo', markersize=3)
+    axs[2].plot(timealt, alt_no, 'bo', markersize=3)
+    plt.suptitle('All GPS Data Without Outliers from ' + longname)
+    plt.xticks(rotation=90)
+    plt.grid(b=True)
+    axs[2].set_xlabel('Date')
+    axs[0].set_ylabel(u'Latitude [\N{DEGREE SIGN}]')
+    axs[1].set_ylabel(u'Longitude [\N{DEGREE SIGN}]')
+    axs[2].set_ylabel('Altitude [m]')
+    plt.savefig(os.path.join(save_dir, 'all_gps_nooutliers.png'), bbox_inches='tight')
     plt.close()
