@@ -76,3 +76,13 @@ def load_raw_lidar(f_raw):
             d = i.split()
             data.append({'time': float(d[0]), 'meas': float(d[1])})
     return data
+
+
+def load_gps(f_gps):
+    data = []
+    with open(f_gps, 'r') as f:
+        for i in f.readlines():
+            d = i.split()
+            data.append({'time': dt.datetime.strptime(d[0] + ' ' + d[1], '%Y-%m-%d %H:%M:%S'),
+                         'lat': d[2], 'lon': d[3], 'alt': d[4]})
+    return data
