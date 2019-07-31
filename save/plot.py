@@ -68,7 +68,7 @@ def plot_gps(longname, save_dir, data_dir):
     data = []
     for root, dirs, files in os.walk(data_dir):
         for i in sorted(files):
-            for j in load_gps(i):
+            for j in load_gps(os.path.join(root, i)):
                 data.append(j)
 
     time = np.array([i['time'] for i in data])
