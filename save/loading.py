@@ -84,7 +84,7 @@ def load_gps(f_gps):
         for i in f.readlines():
             d = i.split()
             try:
-                data.append({'time': dt.datetime.strptime(d[0] + ' ' + d[1], '%Y-%m-%d %H:%M:%S.f'),
+                data.append({'time': dt.datetime.strptime(d[0] + ' ' + d[1], '%Y-%m-%d %H:%M:%S.%f'),
                              'lat': d[2], 'lon': d[3], 'alt': d[4]})
             except ValueError:
                 data.append({'time': dt.datetime.strptime(d[0] + ' ' + d[1], '%Y-%m-%d %H:%M:%S'),
