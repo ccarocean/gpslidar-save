@@ -62,16 +62,10 @@ def load_lidar(lidar_dir, date):
                 firstline = False
             else:
                 d = line.split()
-                #try:
-                data.append({'time': dt.datetime.strptime(d[0] + ' ' + d[1], '%Y-%m-%d %H:%M:%S.f'),
+                data.append({'time': dt.datetime.strptime(d[0] + ' ' + d[1], '%Y-%m-%d %H:%M:%S'),
                              'l_mean': d[2], 'l_max': d[3], 'l_min': d[4], 'l_median': d[5], 'l_n': d[6],
                              'l_skew': d[7], 'l_std': d[8], 'l_Hs': d[9], 'l': d[10]
                              })
-                #except ValueError:
-                #    data.append({'time': dt.datetime.strptime(d[0] + ' ' + d[1], '%Y-%m-%d %H:%M:%S'),
-                #                 'l_mean': d[2], 'l_max': d[3], 'l_min': d[4], 'l_median': d[5], 'l_n': d[6],
-                #                 'l_skew': d[7], 'l_std': d[8], 'l_Hs': d[9], 'l': d[10]
-                #                 })
     return data
 
 
@@ -89,6 +83,10 @@ def load_gps(f_gps):
     with open(f_gps, 'r') as f:
         for i in f.readlines():
             d = i.split()
-            data.append({'time': dt.datetime.strptime(d[0] + ' ' + d[1], '%Y-%m-%d %H:%M:%S'),
-                         'lat': d[2], 'lon': d[3], 'alt': d[4]})
+            try:
+                data.append({'time': dt.datetime.strptime(d[0] + ' ' + d[1], '%Y-%m-%d %H:%M:%S.f'),
+                             'lat': d[2], 'lon': d[3], 'alt': d[4]})
+            except ValueError:
+                data.append({'time': dt.datetime.strptime(d[0] + ' ' + d[1], '%Y-%m-%d %H:%M:%S'),
+                             'lat': d[2], 'lon': d[3], 'alt': d[4]})
     return data
