@@ -62,10 +62,16 @@ def load_lidar(lidar_dir, date):
                 firstline = False
             else:
                 d = line.split()
-                data.append({'time': dt.datetime.strptime(d[0] + ' ' + d[1], '%Y-%m-%d %H:%M:%S'),
-                             'l_mean': d[2], 'l_max': d[3], 'l_min': d[4], 'l_median': d[5], 'l_n': d[6],
-                             'l_skew': d[7], 'l_std': d[8], 'l_Hs': d[9], 'l': d[10]
-                             })
+                try:
+                    data.append({'time': dt.datetime.strptime(d[0] + ' ' + d[1], '%Y-%m-%d %H:%M:%S.f'),
+                                 'l_mean': d[2], 'l_max': d[3], 'l_min': d[4], 'l_median': d[5], 'l_n': d[6],
+                                 'l_skew': d[7], 'l_std': d[8], 'l_Hs': d[9], 'l': d[10]
+                                 })
+                except ValueError:
+                    data.append({'time': dt.datetime.strptime(d[0] + ' ' + d[1], '%Y-%m-%d %H:%M:%S'),
+                                 'l_mean': d[2], 'l_max': d[3], 'l_min': d[4], 'l_median': d[5], 'l_n': d[6],
+                                 'l_skew': d[7], 'l_std': d[8], 'l_Hs': d[9], 'l': d[10]
+                                 })
     return data
 
 
