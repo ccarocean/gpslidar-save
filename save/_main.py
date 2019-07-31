@@ -5,7 +5,7 @@ from .save import save_gps_pos, save_raw_gps, save_lidar
 from .messages import RxmRawx
 from .avg import six_min
 from .coops import check_for_coops
-from .plot import plot_lidar
+from .plot import plot_lidar, plot_gps
 
 
 def main():
@@ -179,3 +179,4 @@ def main():
             print("Raw GPS Data saved for " + s[1] + ': ' + day.strftime('%Y-%m-%d'))
 
         plot_lidar(s[6], os.path.join(data_dir, s[1], 'plots'), os.path.join(data_dir, s[1], 'lidar_sixmin'))
+        plot_gps(s[6], os.path.join(data_dir, s[1], 'plots'), os.path.join(data_dir, s[1], 'position'))
