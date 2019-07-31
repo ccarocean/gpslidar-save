@@ -80,15 +80,21 @@ def plot_gps(longname, save_dir, data_dir):
     lonstd, lonmean = np.std(lon), np.mean(lon)
     altstd, altmean = np.std(alt), np.mean(alt)
 
-    lat = lat[np.where(np.abs(lat - latmean) < 3*latstd)]
-    lon = lon[np.where(np.abs(lon - lonmean) < 3*lonstd)]
-    alt = alt[np.where(np.abs(alt - altmean) < 3*altstd)]
+    indlat = np.where(np.abs(lat - latmean) < 3*latstd)
+    indlon = np.where(np.abs(lon - lonmean) < 3*lonstd)
+    indalt = np.where(np.abs(alt - altmean) < 3*altstd)
+    lat = lat[indlat]
+    lon = lon[indlon]
+    alt = alt[indalt]
+    timelat = time[indlat]
+    timelon = time[indlon]
+    timealt = time[indalt]
 
     # Plot lat, lon, and alt in subplots
     fig, axs = plt.subplots(3, 1, figsize=(12, 10), dpi=80, facecolor='w', sharex=True)
-    axs[0].plot(time, lat, 'bo', markersize=3)
-    axs[1].plot(time, lon, 'bo', markersize=3)
-    axs[2].plot(time, alt, 'bo', markersize=3)
+    axs[0].plot(timelat, lat, 'bo', markersize=3)
+    axs[1].plot(timelon, lon, 'bo', markersize=3)
+    axs[2].plot(timealt, alt, 'bo', markersize=3)
     plt.suptitle('All gps data from ' + longname)
     plt.xticks(rotation=90)
     plt.grid(b=True)
