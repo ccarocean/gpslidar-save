@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import matplotlib
 import datetime as dt
 from .loading import load_lidar, load_gps
 import os
@@ -44,7 +45,7 @@ def plot_lidar(longname, save_dir, data_dir):
     # Plot weeks height data
     plt.figure(figsize=(12, 10), dpi=80, facecolor='w')
     plt.plot(time_week, height_week, 'bo')
-    plt.title('Week\'s LIDAR Height Data from ' +  longname)
+    plt.title('Week\'s LIDAR Height Data from ' + longname)
     plt.xticks(rotation=90)
     plt.grid(b=True)
     plt.xlabel('Date')
@@ -102,6 +103,10 @@ def plot_gps(longname, save_dir, data_dir):
     axs[0].set_ylabel(u'Latitude [\N{DEGREE SIGN}]')
     axs[1].set_ylabel(u'Longitude [\N{DEGREE SIGN}]')
     axs[2].set_ylabel('Altitude [m]')
+    y_formatter = matplotlib.ticker.ScalarFormatter(useOffset=False)
+    axs[0].yaxis.set_major_formatter(y_formatter)
+    axs[1].yaxis.set_major_formatter(y_formatter)
+    axs[2].yaxis.set_major_formatter(y_formatter)
     plt.savefig(os.path.join(save_dir, 'all_gps.png'), bbox_inches='tight')
     plt.close()
 
