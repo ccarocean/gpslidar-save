@@ -81,7 +81,7 @@ def plot_gps(longname, save_dir, data_dir):
     altstd, altmean = np.std(alt), np.mean(alt)
 
     indlat = np.where(np.abs(lat - latmean) < 0.075*latstd)
-    indlon = np.where(np.abs(lon - lonmean) < 0.1*lonstd)
+    indlon = np.where(np.abs(lon - lonmean) < 0.12*lonstd)
     indalt = np.where(np.abs(alt - altmean) < 3*altstd)
     lat_no = lat[indlat]
     lon_no = lon[indlon]
