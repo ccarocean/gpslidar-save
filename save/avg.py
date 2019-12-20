@@ -3,6 +3,101 @@ import numpy as np
 from scipy import stats
 
 
+def remove_outliers(t, meas):
+    t_new, meas_new, t_bad, meas_bad = [], [], [], []
+    t_tmp = t[0]
+    threemin_td = 3 * 60
+    sixmin_td = 6 * 60
+    n_std_1 = 15
+
+    mad = []
+    while t_tmp < t[-1]:
+        ind = np.where((t < (t_tmp + threemin_td)) & (t > (t_tmp - threemin_td)))
+        if len(ind) > 0:
+            meas_6min, t_6min = meas[ind], t[ind]
+            m = np.median(meas_6min)
+            mad.append(1.4826 * np.median(np.absolute(np.array([i - m for i in meas_6min]))))
+        t_tmp = t_tmp + sixmin_td
+
+    mad = np.nanmedian(mad)
+    t_tmp = t[0]
+
+    while t_tmp < t[-1]:
+        ind = np.where((t < (t_tmp + threemin_td)) & (t > (t_tmp - threemin_td)))
+        if len(ind) > 0:
+            meas_6min, t_6min = meas[ind], t[ind]
+            m = np.median(meas_6min)
+            mad = 1.4826 * np.median(np.absolute(np.array([i - m for i in meas_6min])))
+            ind2 = np.where((meas_6min > (m - n_std_1 * mad)) & (meas_6min < (m + n_std_1 * mad)))[0]
+            ind_bad = np.where((meas_6min < (m - n_std_1 * mad)) | (meas_6min > (m + n_std_1 * mad)))[0]
+            for i in ind2:
+                t_new.append(t_6min[i])
+                meas_new.append(meas_6min[i])
+            for i in ind_bad:
+                t_bad.append(t_6min[i])
+                meas_bad.append(meas_6min[i])
+        t_tmp = t_tmp + sixmin_td
+
+    t_bad, meas_bad = [], []
+    t = np.array(t_new)
+    meas = np.array(meas_new)
+    t_new, meas_new, deviation = [], [], []
+    t_tmp = t[0]
+    n_std_2 = 8
+    mad = []
+    while t_tmp < t[-1]:
+        ind = np.where((t < (t_tmp + threemin_td)) & (t > (t_tmp - threemin_td)))
+        if len(ind) > 0:
+            meas_6min, t_6min = meas[ind], t[ind]
+            m = np.median(meas_6min)
+            mad.append(1.4826 * np.median(np.absolute(np.array([i - m for i in meas_6min]))))
+        t_tmp = t_tmp + sixmin_td
+    mad = np.nanmean(mad)
+    t_tmp = t[0]
+
+    while t_tmp < t[-1]:
+        ind = np.where((t < (t_tmp + threemin_td)) & (t > (t_tmp - threemin_td)))
+        if len(ind) > 0:
+            meas_6min, t_6min = meas[ind], t[ind]
+            m = np.median(meas_6min)
+            mad = 1.4826 * np.median(np.absolute(np.array([i - m for i in meas_6min])))
+            ind2 = np.where((meas_6min > (m - n_std_2 * mad)) & (meas_6min < (m + n_std_2 * mad)))[0]
+            ind_bad = np.where((meas_6min < (m - n_std_2 * mad)) | (meas_6min > (m + n_std_2 * mad)))[0]
+            for i in ind2:
+                t_new.append(t_6min[i])
+                meas_new.append(meas_6min[i])
+                deviation.append(meas_6min[i] - m)
+            for i in ind_bad:
+                t_bad.append(t_6min[i])
+                meas_bad.append(meas_6min[i])
+        t_tmp = t_tmp + sixmin_td
+
+    t = np.array(t_new)
+    meas = np.array(meas_new)
+    t_new, meas_new, deviation = [], [], []
+    t_tmp = t[0]
+    n_std_2 = 7
+
+    while t_tmp < t[-1]:
+        ind = np.where((t < (t_tmp + threemin_td)) & (t > (t_tmp - threemin_td)))
+        if len(ind) > 0:
+            meas_6min, t_6min = meas[ind], t[ind]
+            m = np.median(meas_6min)
+            mad = 1.4826 * np.median(np.absolute(np.array([i - m for i in meas_6min])))
+            # mad = np.std(meas_6min)
+            ind2 = np.where((meas_6min > (m - n_std_2 * mad)) & (meas_6min < (m + n_std_2 * mad)))[0]
+            ind_bad = np.where((meas_6min < (m - n_std_2 * mad)) | (meas_6min > (m + n_std_2 * mad)))[0]
+            for i in ind2:
+                t_new.append(t_6min[i])
+                meas_new.append(meas_6min[i])
+                deviation.append(meas_6min[i] - m)
+            for i in ind_bad:
+                t_bad.append(t_6min[i])
+                meas_bad.append(meas_6min[i])
+        t_tmp = t_tmp + sixmin_td
+
+    return np.array(t_new), np.array(meas_new)
+
 def six_min(t0, loc):
     t_prev = t0 - dt.timedelta(days=1)
 
@@ -46,6 +141,8 @@ def six_min(t0, loc):
     t = np.array(t)
     meas = np.array(meas)
 
+    t, meas = remove_outliers(t, meas)
+
     sixmin_measvec = []
 
     td_3m = 3*60
@@ -55,7 +152,8 @@ def six_min(t0, loc):
                 f'{"l_Hs": >9} {"l": >9}\n')
         for i in sixmin_timevec:
             secs = (i - t0).total_seconds()
-            data = meas[(t < (secs + td_3m)) & (t > (secs - td_3m))]
+            #data = meas[(t < (secs + td_3m)) & (t > (secs - td_3m))]
+            data = meas
             if len(data) > 0:
                 l_mean = float(np.nanmean(data))
                 l_max = int(np.max(data))
