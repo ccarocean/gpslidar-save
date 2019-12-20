@@ -67,3 +67,26 @@ def load_lidar(lidar_dir, date):
                              'l_skew': d[7], 'l_std': d[8], 'l_Hs': d[9], 'l': d[10]
                              })
     return data
+
+
+def load_raw_lidar(f_raw):
+    data = []
+    with open(f_raw, 'r') as f:
+        for i in f.readlines():
+            d = i.split()
+            data.append({'time': float(d[0]), 'meas': float(d[1])})
+    return data
+
+
+def load_gps(f_gps):
+    data = []
+    with open(f_gps, 'r') as f:
+        for i in f.readlines():
+            d = i.split()
+            try:
+                data.append({'time': dt.datetime.strptime(d[0] + ' ' + d[1], '%Y-%m-%d %H:%M:%S.%f'),
+                             'lat': d[2], 'lon': d[3], 'alt': d[4]})
+            except ValueError:
+                data.append({'time': dt.datetime.strptime(d[0] + ' ' + d[1], '%Y-%m-%d %H:%M:%S'),
+                             'lat': d[2], 'lon': d[3], 'alt': d[4]})
+    return data

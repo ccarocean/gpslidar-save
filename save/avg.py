@@ -1,6 +1,7 @@
 import datetime as dt
 import numpy as np
 from scipy import stats
+import os
 
 
 def remove_outliers(t, meas):
@@ -118,14 +119,14 @@ def six_min(t0, loc):
 
     t = []
     meas = []
-
-    with open(f_prev_raw, 'r') as f:
-        for i in f.readlines():
-            d = i.split()
-            t_tmp = float(d[0])
-            if t_tmp > (24*60*60 - 3*60):
-                meas.append(int(d[1]))
-                t.append(t_tmp - 24*60*60)
+    if os.path.isfile(f_prev_raw):
+        with open(f_prev_raw, 'r') as f:
+            for i in f.readlines():
+                d = i.split()
+                t_tmp = float(d[0])
+                if t_tmp > (24*60*60 - 3*60):
+                    meas.append(int(d[1]))
+                    t.append(t_tmp - 24*60*60)
 
     with open(f_raw, 'r') as f:
         for i in f.readlines():
