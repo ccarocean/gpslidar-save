@@ -154,7 +154,7 @@ def six_min(t0, loc):
         for i in sixmin_timevec:
             secs = (i - t0).total_seconds()
             data = meas[(t < (secs + td_3m)) & (t > (secs - td_3m))]
-            data = meas
+            #data = meas
             if len(data) > 0:
                 l_mean = float(np.nanmean(data))
                 l_max = int(np.max(data))
