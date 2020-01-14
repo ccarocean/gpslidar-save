@@ -11,17 +11,16 @@ def remove_outliers(t, meas):
     sixmin_td = 6 * 60
     n_std_1 = 15
 
-    mad = []
-    while t_tmp < t[-1]:
-        ind = np.where((t < (t_tmp + threemin_td)) & (t > (t_tmp - threemin_td)))
-        if len(ind) > 0:
-            meas_6min, t_6min = meas[ind], t[ind]
-            m = np.median(meas_6min)
-            mad.append(1.4826 * np.median(np.absolute(np.array([i - m for i in meas_6min]))))
-        t_tmp = t_tmp + sixmin_td
-
-    mad = np.nanmedian(mad)
-    t_tmp = t[0]
+    #mad = []
+    #while t_tmp < t[-1]:
+    #    ind = np.where((t < (t_tmp + threemin_td)) & (t > (t_tmp - threemin_td)))
+    #    if len(ind) > 0:
+    #        meas_6min, t_6min = meas[ind], t[ind]
+    #        m = np.median(meas_6min)
+    #        mad.append(1.4826 * np.median(np.absolute(np.array([i - m for i in meas_6min]))))
+    #    t_tmp = t_tmp + sixmin_td
+    #mad = np.nanmedian(mad)
+    #t_tmp = t[0]
 
     while t_tmp < t[-1]:
         ind = np.where((t < (t_tmp + threemin_td)) & (t > (t_tmp - threemin_td)))
@@ -45,16 +44,16 @@ def remove_outliers(t, meas):
     t_new, meas_new, deviation = [], [], []
     t_tmp = t[0]
     n_std_2 = 8
-    mad = []
-    while t_tmp < t[-1]:
-        ind = np.where((t < (t_tmp + threemin_td)) & (t > (t_tmp - threemin_td)))
-        if len(ind) > 0:
-            meas_6min, t_6min = meas[ind], t[ind]
-            m = np.median(meas_6min)
-            mad.append(1.4826 * np.median(np.absolute(np.array([i - m for i in meas_6min]))))
-        t_tmp = t_tmp + sixmin_td
-    mad = np.nanmean(mad)
-    t_tmp = t[0]
+    #mad = []
+    #while t_tmp < t[-1]:
+    #    ind = np.where((t < (t_tmp + threemin_td)) & (t > (t_tmp - threemin_td)))
+    #    if len(ind) > 0:
+    #        meas_6min, t_6min = meas[ind], t[ind]
+    #        m = np.median(meas_6min)
+    #        mad.append(1.4826 * np.median(np.absolute(np.array([i - m for i in meas_6min]))))
+    #    t_tmp = t_tmp + sixmin_td
+    #mad = np.nanmean(mad)
+    #t_tmp = t[0]
 
     while t_tmp < t[-1]:
         ind = np.where((t < (t_tmp + threemin_td)) & (t > (t_tmp - threemin_td)))
@@ -85,7 +84,6 @@ def remove_outliers(t, meas):
             meas_6min, t_6min = meas[ind], t[ind]
             m = np.median(meas_6min)
             mad = 1.4826 * np.median(np.absolute(np.array([i - m for i in meas_6min])))
-            # mad = np.std(meas_6min)
             ind2 = np.where((meas_6min > (m - n_std_2 * mad)) & (meas_6min < (m + n_std_2 * mad)))[0]
             ind_bad = np.where((meas_6min < (m - n_std_2 * mad)) | (meas_6min > (m + n_std_2 * mad)))[0]
             for i in ind2:
