@@ -27,7 +27,7 @@ def plot_lidar(longname, save_dir, data_dir):
 
     # Find Week Data
     timedelt7 = dt.timedelta(days=7)
-    ind = np.where(time >= (td - timedelt7))
+    ind = np.where(time >= (td - timedelt7) & time <= (td + dt.timedelta(days=1)))
     height_week = height[ind]
     time_week = time[ind]
 
