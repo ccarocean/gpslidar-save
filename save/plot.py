@@ -21,13 +21,13 @@ def plot_lidar(longname, save_dir, data_dir):
     height = np.array([float(i['l_mean']) for i in data])
 
     # Find Today's Data
-    ind = np.where(time >= td and time <= (td + dt.timedelta(days=1)))
+    ind = np.where((time >= td) & (time <= (td + dt.timedelta(days=1))))
     height_today = height[ind]
     time_today = time[ind]
 
     # Find Week Data
     timedelt7 = dt.timedelta(days=7)
-    ind = np.where(time >= (td - timedelt7) and time <= (td + dt.timedelta(days=1)))
+    ind = np.where((time >= (td - timedelt7)) & (time <= (td + dt.timedelta(days=1))))
     height_week = height[ind]
     time_week = time[ind]
 
