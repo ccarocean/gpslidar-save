@@ -21,7 +21,7 @@ def plot_lidar(longname, save_dir, data_dir):
     height = np.array([float(i['l_mean']) for i in data])
 
     # Find Today's Data
-    ind = np.where(time >= td)
+    ind = np.where(time >= td & time <= (td + dt.timedelta(days=1)))
     height_today = height[ind]
     time_today = time[ind]
 
